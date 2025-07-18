@@ -1,0 +1,37 @@
+# Temporary files
+.claude*
+*~
+*.tmp
+*.temp
+
+# R specific
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Build artifacts
+.Rbuildignore
+..Rcheck/
+*.tar.gz
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Package build files
+src/*.o
+src/*.so
+src/*.dll

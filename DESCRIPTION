@@ -1,0 +1,41 @@
+Package: ggdiceplot
+Title: Dice Plot Visualization for ggplot2
+Version: 1.0.0
+Authors@R: 
+    person(
+        given = "Matthias", 
+        family = "Flotho", 
+        email = "matthias.flotho@ccb.uni-saarland.de", 
+        role = c("aut", "cre"),
+        comment = c(ORCID = "0009-0006-4374-0801")
+    )
+Author: Matthias Flotho [aut, cre] (<https://orcid.org/0009-0006-4374-0801>)
+Maintainer: Matthias Flotho <matthias.flotho@ccb.uni-saarland.de>
+Description: Provides ggplot2 extensions for creating dice-based visualizations 
+    where each dot position represents a specific categorical variable. The package 
+    includes geom_dice() for displaying presence/absence of categorical variables 
+    using traditional dice patterns. Each dice position (1-6) represents a different 
+    category, with dots shown only when that category is present. This allows 
+    intuitive visualization of up to 6 categorical variables simultaneously.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+URL: https://github.com/username/ggdiceplot
+BugReports: https://github.com/username/ggdiceplot/issues
+Imports: 
+    ggplot2 (>= 3.4.0),
+    grid,
+    rlang,
+    dplyr (>= 1.0.0),
+    tibble
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    covr
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+LazyData: true
+Depends: 
+    R (>= 4.0.0)

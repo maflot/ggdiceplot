@@ -1,0 +1,239 @@
+---
+title: "Introduction to ggdiceplot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to ggdiceplot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  fig.align = "center"
+)
+```
+
+```{r setup}
+library(ggdiceplot)
+library(ggplot2)
+library(dplyr)
+```
+
+## Introduction
+
+The `ggdiceplot` package provides ggplot2 extensions for creating dice-based visualizations. The main function, `geom_dice()`, displays data points as dice with 1-6 dots arranged in traditional dice patterns. This is particularly useful for visualizing categorical data with multiple dimensions in an intuitive and visually appealing way.
+
+## Basic Usage
+
+The most basic use of `geom_dice()` requires three aesthetic mappings:
+
+- `x`: x-axis position
+- `y`: y-axis position  
+- `z`: number of dots on dice (1-6)
+
+Let's create some sample data to demonstrate:
+
+```{r basic-data}
+# Create sample data
+set.seed(123)
+data <- expand.grid(x = 1:4, y = 1:3) %>%
+  mutate(
+    z = sample(1:6, n(), replace = TRUE),
+    category = sample(c("Type A", "Type B", "Type C"), n(), replace = TRUE)
+  )
+
+head(data)
+```
+
+### Basic Dice Plot
+
+```{r basic-plot}
+# Basic dice plot
+ggplot(data, aes(x = x, y = y, z = z)) +
+  geom_dice() +
+  scale_x_continuous(breaks = 1:4) +
+  scale_y_continuous(breaks = 1:3) +
+  labs(
+    title = "Basic Dice Plot",
+    subtitle = "Each dice shows 1-6 dots based on the z variable",
+    x = "X Position",
+    y = "Y Position"
+  ) +
+  theme_minimal()
+```
+
+## Adding Colors
+
+You can color the dice dots using the `color` aesthetic:
+
+```{r colored-plot}
+# Dice plot with colors
+ggplot(data, aes(x = x, y = y, z = z, color = category)) +
+  geom_dice(dice_size = 1.2) +
+  scale_color_manual(values = c("Type A" = "#E74C3C", "Type B" = "#3498DB", "Type C" = "#2ECC71")) +
+  scale_x_continuous(breaks = 1:4) +
+  scale_y_continuous(breaks = 1:3) +
+  labs(
+    title = "Colored Dice Plot",
+    subtitle = "Dice dots colored by category",
+    x = "X Position",
+    y = "Y Position",
+    color = "Category"
+  ) +
+  theme_minimal()
+```
+
+## Customizing Appearance
+
+The `geom_dice()` function provides several parameters to customize the appearance:
+
+```{r custom-styling}
+# Custom styled dice plot
+ggplot(data, aes(x = x, y = y, z = z, color = category)) +
+  geom_dice(
+    dice_size = 1.5,
+    dice_color = "lightgray",
+    dice_alpha = 0.9,
+    dot_size = 0.4,
+    dot_stroke = 0.8
+  ) +
+  scale_color_manual(values = c("#E74C3C", "#3498DB", "#2ECC71")) +
+  scale_x_continuous(breaks = 1:4) +
+  scale_y_continuous(breaks = 1:3) +
+  labs(
+    title = "Custom Styled Dice Plot",
+    subtitle = "Custom dice background, dot size, and colors",
+    x = "X Position",
+    y = "Y Position",
+    color = "Category"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "#F8F9FA", color = NA)
+  )
+```
+
+## Dice Patterns
+
+The dice patterns follow traditional dice arrangements:
+
+```{r dice-patterns}
+# Show all dice patterns
+pattern_data <- data.frame(
+  x = rep(1:6, each = 1),
+  y = rep(1, 6),
+  z = 1:6,
+  label = paste("Dice", 1:6)
+)
+
+ggplot(pattern_data, aes(x = x, y = y, z = z)) +
+  geom_dice(dice_size = 2) +
+  geom_text(aes(label = label), y = 0.5, size = 3) +
+  scale_x_continuous(breaks = 1:6, limits = c(0.5, 6.5)) +
+  scale_y_continuous(limits = c(0, 2)) +
+  labs(
+    title = "Traditional Dice Patterns",
+    subtitle = "Standard arrangements for 1-6 dots",
+    x = "Dice Value",
+    y = ""
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank()
+  )
+```
+
+## Advanced Usage
+
+### Combining with Other Geoms
+
+You can combine `geom_dice()` with other ggplot2 geoms:
+
+```{r combined-geoms}
+ggplot(data, aes(x = x, y = y)) +
+  geom_tile(aes(fill = category), alpha = 0.3) +
+  geom_dice(aes(z = z, color = category), dice_size = 0.8) +
+  scale_fill_manual(values = c("#FFE5E5", "#E5F2FF", "#E5FFE5")) +
+  scale_color_manual(values = c("#CC0000", "#0066CC", "#00CC00")) +
+  scale_x_continuous(breaks = 1:4) +
+  scale_y_continuous(breaks = 1:3) +
+  labs(
+    title = "Dice Plot with Background Tiles",
+    x = "X Position",
+    y = "Y Position"
+  ) +
+  theme_minimal()
+```
+
+### Faceting
+
+Use faceting to create multiple dice plots:
+
+```{r faceting}
+ggplot(data, aes(x = x, y = y, z = z)) +
+  geom_dice(dice_size = 0.8) +
+  facet_wrap(~category) +
+  scale_x_continuous(breaks = 1:4) +
+  scale_y_continuous(breaks = 1:3) +
+  labs(
+    title = "Faceted Dice Plot",
+    subtitle = "Separate plots for each category",
+    x = "X Position",
+    y = "Y Position"
+  ) +
+  theme_minimal()
+```
+
+## Real-World Example
+
+Here's a more realistic example using dice plots to visualize survey responses:
+
+```{r real-world}
+# Create survey data
+set.seed(456)
+survey_data <- expand.grid(
+  question = paste("Q", 1:5, sep = ""),
+  respondent_group = c("Group A", "Group B", "Group C")
+) %>%
+  mutate(
+    satisfaction = sample(1:6, n(), replace = TRUE, prob = c(0.05, 0.1, 0.15, 0.25, 0.25, 0.2)),
+    x = as.numeric(factor(question)),
+    y = as.numeric(factor(respondent_group))
+  )
+
+ggplot(survey_data, aes(x = x, y = y, z = satisfaction, color = respondent_group)) +
+  geom_dice(dice_size = 1.2, dice_alpha = 0.7) +
+  scale_color_manual(values = c("#FF6B6B", "#4ECDC4", "#45B7D1")) +
+  scale_x_continuous(breaks = 1:5, labels = paste("Q", 1:5, sep = "")) +
+  scale_y_continuous(breaks = 1:3, labels = c("Group A", "Group B", "Group C")) +
+  labs(
+    title = "Survey Satisfaction Scores",
+    subtitle = "Dice dots represent satisfaction level (1-6)",
+    x = "Survey Question",
+    y = "Respondent Group",
+    color = "Group"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Conclusion
+
+The `ggdiceplot` package provides an intuitive way to visualize categorical data using dice representations. The `geom_dice()` function integrates seamlessly with the ggplot2 ecosystem, allowing for complex visualizations while maintaining the familiar ggplot2 syntax.
+
+Key benefits:
+- Intuitive visual representation using familiar dice patterns
+- Full integration with ggplot2 aesthetics and themes
+- Customizable appearance and styling
+- Works with faceting and other ggplot2 features
+- Suitable for various types of categorical data visualization
