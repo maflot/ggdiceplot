@@ -21,21 +21,11 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-URL: https://github.com/username/ggdiceplot
-BugReports: https://github.com/username/ggdiceplot/issues
+URL: https://github.com/maflot/ggdiceplot
+BugReports: https://github.com/maflot/ggdiceplot/issues
 Imports: 
     ggplot2 (>= 3.4.0),
-    grid,
-    rlang,
-    dplyr (>= 1.0.0),
-    tibble
-Suggests: 
-    testthat (>= 3.0.0),
-    knitr,
-    rmarkdown,
-    covr
-Config/testthat/edition: 3
-VignetteBuilder: knitr
+    grid
 LazyData: true
 Depends: 
     R (>= 4.0.0)
