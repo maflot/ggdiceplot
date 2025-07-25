@@ -57,9 +57,12 @@ ggplot(toy_data1, aes(x=specimen, y=taxon)) +
                         labels = c(10^minsize, 10^-midsize, 10^-maxsize),
                         name = "q-value")
 ```
+
+![](demo_output/example1.png)
+
 ## Example 2
 
-```
+```r
 library(ggplot2)
 library(ggdiceplot)
 
@@ -107,6 +110,7 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
                         labels = c(10^minsize, 10^-midsize, 10^-maxsize),
                         name = "q-value")
 ```
+![](demo_output/example2.png)
 
 ## Features
 
