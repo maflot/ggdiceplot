@@ -1,9 +1,0 @@
-# This will be created by running the data creation script
-# For now, let's create a simple CSV version
-set.seed(123)
-sample_dice_data <- expand.grid(x = 1:4, y = 1:3) %>%
-  mutate(
-    z = sample(1:6, n(), replace = TRUE),
-    category = sample(c("Type A", "Type B", "Type C"), n(), replace = TRUE),
-    value = sample(1:100, n(), replace = TRUE)
-  )

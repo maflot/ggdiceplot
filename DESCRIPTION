@@ -25,7 +25,10 @@ URL: https://github.com/maflot/ggdiceplot
 BugReports: https://github.com/maflot/ggdiceplot/issues
 Imports: 
     ggplot2 (>= 3.4.0),
-    grid
+    grid,
+    dplyr,
+    legendry,
+    scales
 LazyData: true
 Depends: 
     R (>= 4.0.0)
