@@ -62,6 +62,7 @@ geom_dice <- function(mapping = NULL, data = NULL,
       )
     ),
     theme_dice(x_length = x_length, y_length = y_length),
+    ggplot2::coord_fixed(ratio = 1),
     ggplot2::guides(dots = guide_legend_base(
       design = create_dice_positions(n_dots = ndots),
       theme = ggplot2::theme(

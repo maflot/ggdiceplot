@@ -119,10 +119,10 @@ scale_dots_discrete <- function(..., aesthetics = "dots") {
 #' Dice Theme for ggplot2
 #' @importFrom ggplot2 %+replace%
 #'
-#' @description A minimal ggplot2 theme for dice plots with controlled aspect ratio.
+#' @description A minimal ggplot2 theme for dice plots.
 #'
-#' @param x_length Width of the plotting area
-#' @param y_length Height of the plotting area
+#' @param x_length Width of the plotting area (kept for compatibility)
+#' @param y_length Height of the plotting area (kept for compatibility)
 #' @param ... Additional arguments passed to `theme_grey()`
 #'
 #' @return A ggplot2 theme
@@ -131,7 +131,6 @@ scale_dots_discrete <- function(..., aesthetics = "dots") {
 theme_dice <- function(x_length, y_length, ...) {
   ggplot2::theme_grey(...) %+replace%
     ggplot2::theme(
-      aspect.ratio = y_length / x_length,
       panel.background = ggplot2::element_rect(fill = NA, colour = NA),
       panel.grid = ggplot2::element_line(colour = "grey80"),
       complete = TRUE

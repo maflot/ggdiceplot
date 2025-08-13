@@ -10,13 +10,14 @@ library(legendry)  # Required for guide_legend_base
 library(scales)
 library(grid)
 
-# Load ggdiceplot functions directly from source
-source("R/utils.R")
-source("R/geom-dice-ggprotto.R")
-source("R/geom-dice.R")
+# Load ggdiceplot - use package if installed, otherwise source files
+
+library(ggdiceplot)
+
 
 # Load ZEBRA dataset
-zebra.df <- read.csv(file = "legacy examples/data/ZEBRA_sex_degs_set.csv")
+# you might need to adapt the path for running it depending on your directory
+zebra.df <- read.csv(file = "debug/ggdiceplot/legacy examples/data/ZEBRA_sex_degs_set.csv")
 
 # Select genes of interest
 genes <- c("SPP1", "APOE", "SERPINA1", "PINK1", "ANGPT1", "ANGPT2", "APP", "CLU", "ABCA7")
@@ -62,27 +63,21 @@ maxsize <- ceiling(max(-log10(zebra.df$FDR), na.rm = TRUE))
 midsize <- ceiling(quantile(-log10(zebra.df$FDR), c(0.5), na.rm = TRUE))
 
 # Create the domino plot using geom_dice
-# Note: geom_dice returns a list with the layer and theme
-dice_plot <- geom_dice(
-  mapping = aes(
-    x = gene, 
-    y = cell_type,
-    dots = contrast,
-    fill = logFC,
-    size = -log10(FDR),
-    width = 0.8,
-    height = 0.8
-  ),
-  data = zebra.df,
-  na.rm = TRUE,
-  show.legend = TRUE,
-  ndots = 5,  # We have 5 contrasts: MS-CT, AD-CT, ASD-CT, FTD-CT, HD-CT
-  x_length = length(genes),  # Use the number of genes
-  y_length = length(unique(zebra.df$cell_type))
-)
-
 p <- ggplot(zebra.df, aes(x = gene, y = cell_type)) +
-  dice_plot +
+  geom_dice(
+    aes(
+      dots = contrast,
+      fill = logFC,
+      size = -log10(FDR),
+      width = 0.8,
+      height = 0.8
+    ),
+    na.rm = TRUE,
+    show.legend = TRUE,
+    ndots = 5,  # We have 5 contrasts: MS-CT, AD-CT, ASD-CT, FTD-CT, HD-CT
+    x_length = length(genes),  # Use the number of genes
+    y_length = length(unique(zebra.df$cell_type))
+  ) +
   scale_fill_gradient2(
     low = "#40004B",
     high = "#00441B",
@@ -95,7 +90,7 @@ p <- ggplot(zebra.df, aes(x = gene, y = cell_type)) +
   scale_size_continuous(
     limits = c(minsize, maxsize),
     breaks = c(minsize, midsize, maxsize),
-    labels = round(10^(-c(minsize, midsize, maxsize)), 3),
+    labels = c(10^minsize, 10^-midsize, 10^-maxsize),
     name = "FDR"
   ) +
   theme_minimal() +
@@ -104,8 +99,6 @@ p <- ggplot(zebra.df, aes(x = gene, y = cell_type)) +
     axis.text.y = element_text(size = 12),
     legend.text = element_text(size = 12),
     legend.title = element_text(size = 12),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
     # Remove legend key background and border
     legend.key = element_blank(),
     legend.key.size = unit(0.8, "cm")
@@ -123,26 +116,21 @@ ggsave("ZEBRA_domino_example.png", p, width = 10, height = 8, dpi = 300)
 print(p)
 
 # Create version with custom legend labels
-dice_plot2 <- geom_dice(
-  mapping = aes(
-    x = gene,
-    y = cell_type,
-    dots = contrast,
-    fill = logFC,
-    size = -log10(FDR),
-    width = 0.7,
-    height = 0.7
-  ),
-  data = zebra.df,
-  na.rm = TRUE,
-  show.legend = TRUE,
-  ndots = 5,  # We have 5 contrasts
-  x_length = length(genes),
-  y_length = length(unique(zebra.df$cell_type))
-)
-
 p2 <- ggplot(zebra.df, aes(x = gene, y = cell_type)) +
-  dice_plot2 +
+  geom_dice(
+    aes(
+      dots = contrast,
+      fill = logFC,
+      size = -log10(FDR),
+      width = 0.7,
+      height = 0.7
+    ),
+    na.rm = TRUE,
+    show.legend = TRUE,
+    ndots = 5,  # We have 5 contrasts
+    x_length = length(genes),
+    y_length = length(unique(zebra.df$cell_type))
+  ) +
   scale_fill_gradient2(
     low = "#40004B",
     high = "#00441B",
@@ -155,7 +143,7 @@ p2 <- ggplot(zebra.df, aes(x = gene, y = cell_type)) +
   scale_size_continuous(
     limits = c(minsize, maxsize),
     breaks = c(minsize, midsize, maxsize),
-    labels = round(10^(-c(minsize, midsize, maxsize)), 3),
+    labels = c(10^minsize, 10^-midsize, 10^-maxsize),
     name = "Other scale name"
   ) +
   theme_minimal() +

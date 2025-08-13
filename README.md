@@ -42,7 +42,7 @@ ggplot(toy_data1, aes(x=specimen, y=taxon)) +
             show.legend=TRUE, 
             # For legend position calculation
             ndots=length(unique(toy_data$disease)),
-            # For aspect.ratio: ensure squares
+            # For aspect.ratio: ensure squares (now automatic with coord_fixed)
             x_length = length(unique(toy_data$specimen)), 
             y_length = length(unique(toy_data$taxon)), 
             )+
@@ -95,7 +95,7 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
             show.legend=TRUE, 
             # For legend position calculation
             ndots=length(unique(toy_data$disease)),
-            # For aspect.ratio: ensure squares
+            # For aspect.ratio: ensure squares (now automatic with coord_fixed)
             x_length = length(unique(toy_data$specimen)), 
             y_length = length(unique(toy_data$taxon)), 
   )+
@@ -114,16 +114,23 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
 
 ## Features
 
+- **1:1 Aspect Ratio**: Dice automatically appear as perfect squares using `coord_fixed(ratio = 1)`
 - **Automatic Sizing**: Dice automatically scale based on grid density
 - **Boundary Safety**: Dice stay within plot boundaries
 - **Flexible Mapping**: Map any categories to dice positions 1-6
 - **Multiple Applications**: Gene expression, survey data, clinical trials, market research
 - **Customizable**: Control dice size, colors, and positioning
 
+## Important Update
+
+**Automatic Aspect Ratio Control**: As of the latest version, `geom_dice()` automatically applies `coord_fixed(ratio = 1)` to ensure dice appear as perfect squares. The `x_length` and `y_length` parameters are maintained for compatibility but no longer affect aspect ratio.
+
 ## Key Functions
 
-- `geom_dice()`: Main geom for creating dice plots
+- `geom_dice()`: Main geom for creating dice plots with automatic 1:1 aspect ratio
+- `theme_dice()`: Minimal theme optimized for dice plots
 - `create_dice_positions()`: Generate standard dice dot positions
+- `make_offsets()`: Calculate dice dot positions for rendering
 
 ## Demo Examples
 
