@@ -112,6 +112,102 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
 ```
 ![](demo_output/example2.png)
 
+## Example 3: ZEBRA Domino Plot
+
+This example demonstrates using `geom_dice()` to create a domino plot for gene expression analysis across multiple diseases and cell types.
+
+```r
+library(ggplot2)
+library(ggdiceplot)
+library(dplyr)
+library(tidyr)
+
+# Load ZEBRA dataset
+zebra.df <- read.csv("legacy examples/data/ZEBRA_sex_degs_set.csv")
+
+# Select genes of interest
+genes <- c("SPP1", "APOE", "SERPINA1", "PINK1", "ANGPT1", "ANGPT2", "APP", "CLU", "ABCA7")
+
+# Filter and prepare data
+zebra.df <- zebra.df %>% 
+  filter(gene %in% genes) %>%
+  filter(contrast %in% c("MS-CT", "AD-CT", "ASD-CT", "FTD-CT", "HD-CT")) %>%
+  mutate(
+    cell_type = factor(cell_type, levels = sort(unique(cell_type))),
+    contrast = factor(contrast, levels = c("MS-CT", "AD-CT", "ASD-CT", "FTD-CT", "HD-CT")),
+    gene = factor(gene, levels = genes)
+  ) %>%
+  filter(PValue < 0.05) %>%
+  group_by(gene, cell_type, contrast) %>%
+  summarise(
+    logFC = mean(logFC, na.rm = TRUE),
+    FDR = min(FDR, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  complete(gene, cell_type, contrast, fill = list(logFC = NA, FDR = NA))
+
+# Calculate scale limits
+lo <- floor(min(zebra.df$logFC, na.rm = TRUE))
+up <- ceiling(max(zebra.df$logFC, na.rm = TRUE))
+mid <- (lo + up) / 2
+
+minsize <- floor(min(-log10(zebra.df$FDR), na.rm = TRUE))
+maxsize <- ceiling(max(-log10(zebra.df$FDR), na.rm = TRUE))
+midsize <- ceiling(quantile(-log10(zebra.df$FDR), c(0.5), na.rm = TRUE))
+
+# Create domino plot
+ggplot(zebra.df, aes(x = gene, y = cell_type)) +
+  geom_dice(
+    aes(
+      dots = contrast,
+      fill = logFC,
+      size = -log10(FDR),
+      width = 0.8,
+      height = 0.8
+    ),
+    na.rm = TRUE,
+    show.legend = TRUE,
+    ndots = 5,  # We have 5 contrasts
+    x_length = length(genes),
+    y_length = length(unique(zebra.df$cell_type))
+  ) +
+  scale_fill_gradient2(
+    low = "#40004B",
+    high = "#00441B",
+    mid = "white",
+    na.value = "white",
+    limit = c(lo, up),
+    midpoint = mid,
+    name = "Log2FC"
+  ) +
+  scale_size_continuous(
+    limits = c(minsize, maxsize),
+    breaks = c(minsize, midsize, maxsize),
+    labels = c(10^minsize, 10^-midsize, 10^-maxsize),
+    name = "FDR"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 12),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 12),
+    legend.key = element_blank(),
+    legend.key.size = unit(0.8, "cm")
+  ) +
+  labs(
+    x = "Gene",
+    y = "Cell Type",
+    title = "ZEBRA Sex DEGs Domino Plot"
+  )
+```
+
+![](demo_output/ZEBRA_domino_example.png)
+
+**Alternative with custom legend labels:**
+
+![](demo_output/ZEBRA_domino_example_custom_labels.png)
+
 ## Features
 
 - **1:1 Aspect Ratio**: Dice automatically appear as perfect squares using `coord_fixed(ratio = 1)`
@@ -136,7 +232,7 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
 
 See the `demo_output/` directory for:
 - Basic functionality examples
-- Real-world usage scenarios
+- Real-world usage scenarios (ZEBRA gene expression analysis)
 - Boundary validation tests
 - Custom sizing demonstrations
 
@@ -145,17 +241,21 @@ Run the demo scripts:
 cd demo_output
 Rscript create_demo_plots.R
 Rscript usage_examples.R
+
+# Run the ZEBRA domino example
+cd examples
+Rscript zebra_domino_example.R
 ```
 
 ## Package Structure
 
 - `R/`: Core package functions
 - `data/`: Sample datasets
-- `demo_output/`: Example plots and scripts
-- `inst/examples/`: Installation examples
+- `demo_output/`: Example plots and output images
+- `examples/`: Real-world usage examples (ZEBRA domino plot)
+- `legacy examples/`: Legacy examples and data files
 - `man/`: Documentation files
-- `tests/`: Unit tests
-- `vignettes/`: Extended documentation
+- `inst/`: Package installation files
 
 ## Documentation
 
