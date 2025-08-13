@@ -1,5 +1,9 @@
 # ggdiceplot
 
+> [!Note]
+> This repository is in active development
+> Please report errors or other issues to help improve the package!
+
 A ggplot2 extension for creating dice plot visualizations, where each dice represents multiple categorical variables using the traditional dice dot patterns.
 
 ## Installation
