@@ -1,3 +1,7 @@
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/diceplot)](https://CRAN.R-project.org/package=ggdiceplot)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/diceplot)](https://CRAN.R-project.org/package=ggdiceplot)
+
+
 # ggdiceplot
 
 > [!Note]
@@ -14,6 +18,10 @@ devtools::install_local("path/to/ggdiceplot")
 
 # Or install dependencies manually
 install.packages(c("ggplot2", "tibble"))
+```
+
+```r
+install.packages(c("ggdiceplot"))
 ```
 
 ## Example 1
