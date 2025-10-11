@@ -21,13 +21,23 @@ make_offsets <- function(n, width = 0.5, height = 0.5, pad = 0.1) {
     row = rep(3:1, times = 3)
   )
   
+  # Define dice dot positions with row-major order (left-to-right, top-to-bottom)
+  # Grid layout:
+  # 1  2  3
+  # 4  5  6
+  # 7  8  9
+  # 
+  # For 4+ dots, we use row-major ordering to match legend display:
+  # - 4 dots: top-left, top-right, bottom-left, bottom-right (1, 7, 3, 9)
+  # - 5 dots: adds center point in middle position (1, 7, 5, 3, 9)
+  # - 6 dots: full rows - top row left-to-right, bottom row left-to-right (1, 4, 7, 3, 6, 9)
   dice_map <- list(
     "1" = c(5),
     "2" = c(1, 9),
     "3" = c(1, 5, 9),
-    "4" = c(1, 3, 7, 9),
-    "5" = c(1, 3, 5, 7, 9),
-    "6" = c(1, 2, 3, 7, 8, 9)
+    "4" = c(1, 7, 3, 9),      # Row-major: top-left, top-right, bottom-left, bottom-right
+    "5" = c(1, 7, 5, 3, 9),   # Row-major: top-left, top-right, center, bottom-left, bottom-right
+    "6" = c(1, 4, 7, 3, 6, 9) # Row-major: top row (left, mid, right), bottom row (left, mid, right)
   )
   
   positions <- dice_map[[as.character(n)]]
@@ -35,7 +45,8 @@ make_offsets <- function(n, width = 0.5, height = 0.5, pad = 0.1) {
   grid_pos$x <- (grid_pos$col - 1) / 2
   grid_pos$y <- (grid_pos$row - 1) / 2
   
-  dots <- grid_pos[grid_pos$pos %in% positions, c("x", "y")]
+  # This ensures dots appear in the correct sequence (row-major) rather than grid_pos order
+  dots <- grid_pos[match(positions, grid_pos$pos), c("x", "y")]
   
   avail_w <- width - 2 * pad
   avail_h <- height - 2 * pad
@@ -43,6 +54,11 @@ make_offsets <- function(n, width = 0.5, height = 0.5, pad = 0.1) {
   dots$x <- dots$x * avail_w + pad - width / 2
   dots$y <- dots$y * avail_h + pad - height / 2
   
+  # Reset row names to NULL to ensure clean indexing
+  # Without this, row names would inherit from grid_pos (e.g., 1, 3, 7, 9)
+  # which would cause misalignment when converting to matrix with column_to_rownames("key")
+  # After reset, row names become 1, 2, 3, 4 matching the key values
+  rownames(dots) <- NULL
   dots$key <- seq_len(n)
   
   dots <- dots[, c("key", "x", "y")]

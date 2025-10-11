@@ -26,6 +26,13 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                              
                              setup_data = function(data, params, ...) {
                                data$na.rm <- data$na.rm %||% params$na.rm
+
+                               # Critical fix: Save original dots values before scale processing
+                               # At this point data$dots is still the original factor or character
+                               data$dots_original <- data$dots
+                               if (is.factor(data$dots)) {
+                                 attr(data, "dots_levels") <- levels(data$dots)
+                               }
                                data
                              },
                              
@@ -36,7 +43,14 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                data$y <- as.numeric(data$y)
                                
                                tile_coords <- dplyr::distinct(data, x, y)
-                               
+                               dots_levels <- attr(data, "dots_levels")
+
+                               if (!is.null(dots_levels)) {
+                                 present_levels <- dots_levels[dots_levels %in% as.character(data$dots_original)]
+                               } else {
+                                 present_levels <- as.character(unique(data$dots_original))
+                               }
+
                                offsets <- make_offsets(
                                  n = length(unique(data$dots)),
                                  width = unique(data$width)[1],
@@ -53,24 +67,29 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                  df <- as.data.frame(coords)
                                  df$x_coord <- tile_coords$x[i]
                                  df$y_coord <- tile_coords$y[i]
-                                 df$key <- unique(data$dots)
+                                 df$key <- present_levels
                                  df
                                })
                                
                                point_coords <- dplyr::bind_rows(point_coords_list)
                                point_coords$id <- paste0(point_coords$key, point_coords$x_coord, point_coords$y_coord)
                                
-                               data$point_id <- paste0(data$dots, data$x, data$y)
+                               # Use original dots_original to create point_id
+                               data$point_id <- paste0(data$dots_original, data$x, data$y)
                                point_df <- dplyr::filter(point_coords, id %in% data$point_id)
                                
-                               point_df$size <- data$size
-                               point_df$shape <- data$shape
-                               point_df$stroke <- data$stroke
-                               point_df$alpha <- data$alpha
-                               point_df$colour <- data$fill
-                               point_df$fill <- data$fill
+                               # Precise attribute matching
+                               attr_lookup <- data[!duplicated(data$point_id), ]
+                               match_idx <- match(point_df$id, attr_lookup$point_id)
+                               
+                               point_df$size <- attr_lookup$size[match_idx]
+                               point_df$shape <- attr_lookup$shape[match_idx]
+                               point_df$stroke <- attr_lookup$stroke[match_idx]
+                               point_df$alpha <- attr_lookup$alpha[match_idx]
+                               point_df$fill <- attr_lookup$fill[match_idx]
+                               point_df$colour <- attr_lookup$fill[match_idx]
+                               point_df$group <- attr_lookup$group[match_idx]
                                point_df$PANEL <- 1
-                               point_df$group <- data$group
                                
                                bad_mask <- is.infinite(point_df$size) | point_df$size <= 0
                                if (any(bad_mask, na.rm = TRUE)) {
