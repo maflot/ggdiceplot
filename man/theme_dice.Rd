@@ -7,9 +7,9 @@
 theme_dice(x_length, y_length, ...)
 }
 \arguments{
-\item{x_length}{Width of the plotting area}
+\item{x_length}{Width of the plotting area (kept for compatibility)}
 
-\item{y_length}{Height of the plotting area}
+\item{y_length}{Height of the plotting area (kept for compatibility)}
 
 \item{...}{Additional arguments passed to \code{theme_grey()}}
 }
@@ -17,5 +17,5 @@ theme_dice(x_length, y_length, ...)
 A ggplot2 theme
 }
 \description{
-A minimal ggplot2 theme for dice plots with controlled aspect ratio.
+A minimal ggplot2 theme for dice plots.
 }

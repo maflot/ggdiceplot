@@ -24,7 +24,7 @@ install.packages(c("ggplot2", "tibble"))
 install.packages(c("ggdiceplot"))
 ```
 
-## Example 1
+## Example: Taxonomy 
 
 ```r
 library(ggplot2)
@@ -72,56 +72,72 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
 
 ![](demo_output/example1.png)
 
-## Example 2
+## Example: miRNA dysregulation
 
 ```r
+## ---- SETUP ----
 library(ggplot2)
 library(ggdiceplot)
 
+## ---- LOAD SAMPLE DATA (from package) ----
+# If internal dataset exists, use it; otherwise fall back to df_dice
+if ("sample_dice_miRNA" %in% data(package="ggdiceplot")$results[, "Item"]) {
+  data("sample_dice_miRNA", package = "ggdiceplot")
+  df_dice <- sample_dice_miRNA
+} else {
+  message("sample_dice_miRNA not found in package — using inline example.")
+  
+  df_dice <- data.frame(
+    miRNA = c("miR-1","miR-1","miR-1","miR-2","miR-2","miR-2","miR-3","miR-3"),
+    Compound = c("Compound_1","Compound_1","Compound_2","Compound_1","Compound_2","Compound_3","Compound_3","Compound_1"),
+    Organ = c("Lung","Brain","Liver","Lung","Liver","Brain","Liver","Brain"),
+    log2FC = c(1.2,-0.8,0.3,-1.1,0.6,2,-0.5,1.5)
+  )
+  
+  df_dice$direction <- ifelse(df_dice$log2FC > 0.5, "Up",
+                              ifelse(df_dice$log2FC < -0.5, "Down","Unchanged"))
+  
+  df_dice$Organ     <- factor(df_dice$Organ, levels = c("Lung","Liver","Brain"))
+  df_dice$direction <- factor(df_dice$direction, levels = c("Down","Unchanged","Up"))
+  df_dice$Compound  <- factor(df_dice$Compound, levels = c("Compound_1","Compound_2","Compound_3"))
+  df_dice$miRNA     <- factor(df_dice$miRNA)
+}
 
-toy_data <- data("sample_dice_data1", package = "ggdiceplot")
-toy_data <- sample_dice_data1
-#
-## PARAMS
-#
+## ---- COLORS ----
+direction_colors <- c(
+  Down      = "#2166ac",
+  Unchanged = "grey80",
+  Up        = "#b2182b"
+)
 
-# Effect size
-lo = floor(min(toy_data$lfc, na.rm = TRUE))
-up = ceiling(max(toy_data$lfc, na.rm=TRUE))
-mid = (lo + up)/2
+## ---- PLOT ----
+p_dice <- ggplot(df_dice, aes(x = miRNA, y = Compound)) +
+  geom_dice(
+    aes(
+      dots  = Organ,
+      fill  = direction,
+      width = 0.8,
+      height = 0.8
+    ),
+    show.legend = TRUE,
+    ndots       = length(levels(df_dice$Organ)),
+    x_length    = length(levels(df_dice$miRNA)),
+    y_length    = length(levels(df_dice$Compound))
+  ) +
+  scale_fill_manual(values = direction_colors, name = "Regulation") +
+  theme_dice() +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
+    axis.text.y = element_text(hjust = 1),
+    panel.grid  = element_blank()
+  ) +
+  labs(
+    title = "DicePlot: log2FC direction per miRNA, compound and organ",
+    x = "miRNA",
+    y = "Compound"
+  )
 
-minsize = floor(min(-log10(toy_data$q), na.rm=TRUE))
-maxsize = ceiling(max(-log10(toy_data$q), na.rm=TRUE))
-midsize = ceiling(quantile(-log10(toy_data$q), c(0.5), na.rm=TRUE))
-
-#
-## PLOT
-#
-
-ggplot(toy_data, aes(x=specimen, y=taxon)) +
-  geom_dice(aes(dots=disease, fill=lfc, size=-log10(q), 
-                # Square dims
-                width = 0.5, height = 0.5),
-            # For missing info
-            na.rm = TRUE,
-            # For legend display
-            show.legend=TRUE, 
-            # For legend position calculation
-            ndots=length(unique(toy_data$disease)),
-            # For aspect.ratio: ensure squares (now automatic with coord_fixed)
-            x_length = length(unique(toy_data$specimen)), 
-            y_length = length(unique(toy_data$taxon)), 
-  )+
-  scale_fill_continuous(name="lfc") +
-  scale_fill_gradient2(low = "#40004B", high = "#00441B", mid = "white",
-                       na.value = "white", 
-                       limit = c(lo, up),
-                       midpoint = mid, 
-                       name = "Log2FC") +
-  scale_size_continuous(limits = c(minsize, maxsize),
-                        breaks = c(minsize, midsize, maxsize),
-                        labels = c(10^minsize, 10^-midsize, 10^-maxsize),
-                        name = "q-value")
+print(p_dice)
 ```
 ![](demo_output/example2.png)
 
@@ -216,10 +232,6 @@ ggplot(zebra.df, aes(x = gene, y = cell_type)) +
 ```
 
 ![](demo_output/ZEBRA_domino_example.png)
-
-**Alternative with custom legend labels:**
-
-![](demo_output/ZEBRA_domino_example_custom_labels.png)
 
 ## Features
 
