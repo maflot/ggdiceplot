@@ -40,8 +40,10 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                # This ensures that when fill is mapped to a discrete variable,
                                # the legend shows the fill colors correctly
                                data$shape <- 21
-                               # Set stroke color to match fill for clean appearance
-                               if (!is.null(data$fill) && !is.na(data$fill)) {
+                               # Set stroke color to match fill for clean appearance, but only if fill is actually set
+                               # Check for both NULL and NA, and also check if it's the string "NA" (which can happen)
+                               if (!is.null(data$fill) && !is.na(data$fill) && 
+                                   !(is.character(data$fill) && data$fill == "NA")) {
                                  data$colour <- data$fill
                                }
                                ggplot2::draw_key_point(data, params, size)
