@@ -21,7 +21,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                height = 0.5
                              ),
                              
-                             extra_params = c("na.rm", "ndots", "x_length", "y_length"),
+                             extra_params = c("na.rm", "ndots", "x_length", "y_length", "pad"),
                              
                              setup_data = function(data, params, ...) {
                                data$na.rm <- data$na.rm %||% params$na.rm
@@ -64,7 +64,8 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                offsets <- make_offsets(
                                  n = length(unique(data$dots)),
                                  width = unique(data$width)[1],
-                                 height = unique(data$height)[1]
+                                 height = unique(data$height)[1],
+                                 pad = params$pad %||% 0.1
                                )
                                
                                offsets_mat <- offsets |>

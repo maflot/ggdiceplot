@@ -24,6 +24,7 @@
 #' @param ndots Integer (1–6): number of positions shown per dice.
 #' @param x_length, x_length Numeric: used for aspect ratio.
 #' @param y_length, y_length Numeric: used for aspect ratio.
+#' @param pad Numeric: padding around dot positions (default: 0.1). Increase to pull dots closer to center.
 #' @param ... Additional arguments passed to `layer()`.
 #'
 #' @return A `ggplot2` layer that draws dice with categorical dot encodings.
@@ -38,11 +39,17 @@
 #'   dots = c("A,B", "A,C,E", "F")
 #' )
 #'
+#' # Default pad value
 #' ggplot(df, aes(x, y, dots = dots)) +
 #'   geom_dice(ndots = 6, x_length = 3, y_length = 1)
+#'
+#' # Increase pad to pull dots closer to center
+#' ggplot(df, aes(x, y, dots = dots)) +
+#'   geom_dice(ndots = 6, x_length = 3, y_length = 1, pad = 0.2)
 geom_dice <- function(mapping = NULL, data = NULL,
                       stat = "identity", position = "identity",
                       ndots = NULL, x_length = NULL, y_length = NULL,
+                      pad = 0.1,
                       na.rm = FALSE, show.legend = TRUE, inherit.aes = TRUE, ...) {
   
   list(
@@ -58,7 +65,8 @@ geom_dice <- function(mapping = NULL, data = NULL,
         na.rm = na.rm,
         ndots = ndots,
         x_length = x_length,
-        y_length = y_length
+        y_length = y_length,
+        pad = pad
       )
     ),
     theme_dice(x_length = x_length, y_length = y_length),
