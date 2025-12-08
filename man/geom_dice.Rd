@@ -14,6 +14,7 @@ geom_dice(
   ndots = NULL,
   x_length = NULL,
   y_length = NULL,
+  pad = 0.1,
   na.rm = FALSE,
   show.legend = TRUE,
   inherit.aes = TRUE,
@@ -40,6 +41,8 @@ Must include:
 
 \item{y_length, }{y_length Numeric: used for aspect ratio.}
 
+\item{pad}{Numeric: padding around dot positions (default: 0.1). Increase to pull dots closer to center.}
+
 \item{na.rm}{Remove missing values if \code{TRUE}.}
 
 \item{show.legend}{Whether to include in legend.}
@@ -65,7 +68,12 @@ df <- data.frame(
   dots = c("A,B", "A,C,E", "F")
 )
 
+# Default pad value
 ggplot(df, aes(x, y, dots = dots)) +
   geom_dice(ndots = 6, x_length = 3, y_length = 1)
+
+# Increase pad to pull dots closer to center
+ggplot(df, aes(x, y, dots = dots)) +
+  geom_dice(ndots = 6, x_length = 3, y_length = 1, pad = 0.2)
 }
 \keyword{datasets}
