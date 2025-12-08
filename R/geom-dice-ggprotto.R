@@ -18,8 +18,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                alpha = 0.8,
                                stroke = 1,
                                width = 0.5,
-                               height = 0.5,
-                               show.legend = TRUE
+                               height = 0.5
                              ),
                              
                              extra_params = c("na.rm", "ndots", "x_length", "y_length"),
@@ -36,7 +35,18 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                data
                              },
                              
-                             draw_key = ggplot2::draw_key_point,
+                             draw_key = function(data, params, size) {
+                               # Always use filled circle (shape 21) to properly display fill colors in legend
+                               # This ensures that when fill is mapped to a discrete variable,
+                               # the legend shows the fill colors correctly
+                               data$shape <- 21
+                               # Set stroke color to match fill for clean appearance, but only if fill is actually set
+                               # Check for NULL, NA, and also the string "NA" (which ggplot2 can pass when fill is unmapped)
+                               if (!is.null(data$fill) && !is.na(data$fill)) {
+                                 data$colour <- data$fill
+                               }
+                               ggplot2::draw_key_point(data, params, size)
+                             },
                              
                              draw_panel = function(data, panel_params, coord, params, ...) {
                                data$x <- as.numeric(data$x)
