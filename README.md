@@ -31,8 +31,8 @@ library(ggplot2)
 library(ggdiceplot)
 
 # Create sample data
-toy_data1 <- data(sample_dice_data1)
-
+data("sample_dice_data1", package = "ggdiceplot")
+toy_data = sample_dice_data1
 # Effect size
 lo = floor(min(toy_data$lfc, na.rm = TRUE))
 up = ceiling(max(toy_data$lfc, na.rm=TRUE))
@@ -46,7 +46,7 @@ midsize = ceiling(quantile(-log10(toy_data$q), c(0.5), na.rm=TRUE))
 ## PLOT
 #
 
-ggplot(toy_data1, aes(x=specimen, y=taxon)) +
+ggplot(toy_data, aes(x=specimen, y=taxon)) +
   geom_dice(aes(dots=disease, fill=lfc, size=-log10(q), 
                 # Square dims
                 width = 0.5, height = 0.5),
@@ -57,13 +57,13 @@ ggplot(toy_data1, aes(x=specimen, y=taxon)) +
             # For aspect.ratio: ensure squares (now automatic with coord_fixed)
             x_length = length(unique(toy_data$specimen)), 
             y_length = length(unique(toy_data$taxon)), 
-            )+
+  )+
   scale_fill_continuous(name="lfc") +
   scale_fill_gradient2(low = "#40004B", high = "#00441B", mid = "white",
-                        na.value = "white", 
+                       na.value = "white", 
                        limit = c(lo, up),
                        midpoint = mid, 
-                        name = "Log2FC") +
+                       name = "Log2FC") +
   scale_size_continuous(limits = c(minsize, maxsize),
                         breaks = c(minsize, midsize, maxsize),
                         labels = c(10^minsize, 10^-midsize, 10^-maxsize),
@@ -78,8 +78,9 @@ ggplot(toy_data1, aes(x=specimen, y=taxon)) +
 library(ggplot2)
 library(ggdiceplot)
 
-toy_data <- data(sample_dice_data2)
 
+toy_data <- data("sample_dice_data1", package = "ggdiceplot")
+toy_data <- sample_dice_data1
 #
 ## PARAMS
 #
