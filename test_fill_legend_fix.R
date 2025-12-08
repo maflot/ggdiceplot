@@ -74,7 +74,7 @@ p_dice <- ggplot(df_dice, aes(x = miRNA, y = Compound)) +
   geom_dice(
     aes(
       dots  = Organ,      # Position in dice = Organ
-      fill  = direction,  # Color = Up / Down / Unchanged
+      fill  = direction,  # Fill = Up / Down / Unchanged
       width = 0.8,
       height = 0.8
     ),

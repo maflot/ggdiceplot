@@ -41,9 +41,8 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                # the legend shows the fill colors correctly
                                data$shape <- 21
                                # Set stroke color to match fill for clean appearance, but only if fill is actually set
-                               # Check for both NULL and NA, and also check if it's the string "NA" (which can happen)
-                               if (!is.null(data$fill) && !is.na(data$fill) && 
-                                   !(is.character(data$fill) && data$fill == "NA")) {
+                               # Check for NULL, NA, and also the string "NA" (which ggplot2 can pass when fill is unmapped)
+                               if (!is.null(data$fill) && !is.na(data$fill)) {
                                  data$colour <- data$fill
                                }
                                ggplot2::draw_key_point(data, params, size)
