@@ -190,9 +190,7 @@ ggplot(zebra.df, aes(x = gene, y = cell_type)) +
     aes(
       dots = contrast,
       fill = logFC,
-      size = -log10(FDR),
-      width = 0.8,
-      height = 0.8
+      size = -log10(FDR)
     ),
     na.rm = TRUE,
     show.legend = TRUE,
