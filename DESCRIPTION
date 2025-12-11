@@ -1,5 +1,5 @@
 Package: ggdiceplot
-Title: Dice Plot Visualization for ggplot2
+Title: DicePlot Visualization for ggplot2
 Version: 1.0.0
 Authors@R: 
     person(
