@@ -24,6 +24,11 @@
 #' @param ndots Integer (1–6): number of positions shown per dice.
 #' @param x_length, x_length Numeric: used for aspect ratio.
 #' @param y_length, y_length Numeric: used for aspect ratio.
+#' @param pip_fill Numeric (0–1): fraction of inter-pip spacing used as pip
+#'   diameter for automatic size scaling. `1.0` means pips just touch; `0.75`
+#'   (default) leaves a small gap. Set to `NULL` to disable auto-scaling and
+#'   use the `size` aesthetic directly. Auto-scaling is always skipped when
+#'   `size` is mapped to a variable in `aes()`.
 #' @param ... Additional arguments passed to `layer()`.
 #'
 #' @return A `ggplot2` layer that draws dice with categorical dot encodings.
@@ -43,8 +48,9 @@
 geom_dice <- function(mapping = NULL, data = NULL,
                       stat = "identity", position = "identity",
                       ndots = NULL, x_length = NULL, y_length = NULL,
+                      pip_fill = 0.75,
                       na.rm = FALSE, show.legend = TRUE, inherit.aes = TRUE, ...) {
-  
+
   list(
     ggplot2::layer(
       geom = GeomDice,
@@ -58,7 +64,8 @@ geom_dice <- function(mapping = NULL, data = NULL,
         na.rm = na.rm,
         ndots = ndots,
         x_length = x_length,
-        y_length = y_length
+        y_length = y_length,
+        pip_fill = pip_fill
       )
     ),
     theme_dice(x_length = x_length, y_length = y_length),
@@ -68,7 +75,7 @@ geom_dice <- function(mapping = NULL, data = NULL,
       theme = ggplot2::theme(
         legend.background = ggplot2::element_rect(
           fill = "white", colour = "grey", linewidth = 0.5),
-        legend.key = ggplot2::element_rect(fill = "white"),
+        legend.key = ggplot2::element_rect(fill = NA, colour = NA),
         legend.key.spacing.x = grid::unit(0.1, "cm"),
         legend.key.spacing.y = grid::unit(0.5, "cm"),
         legend.text = ggplot2::element_text(hjust = 0.5),
