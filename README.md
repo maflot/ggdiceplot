@@ -15,59 +15,50 @@ A ggplot2 extension for creating dice plot visualizations, where each dice repre
 ```r
 # Install from local directory
 devtools::install_local("path/to/ggdiceplot")
-
-# Or install dependencies manually
-install.packages(c("ggplot2", "tibble"))
 ```
 
 ```r
 install.packages(c("ggdiceplot"))
 ```
 
-## Example: Taxonomy 
+## Example: Taxonomy
 
 ```r
 library(ggplot2)
 library(ggdiceplot)
 
-# Create sample data
 data("sample_dice_data1", package = "ggdiceplot")
-toy_data = sample_dice_data1
-# Effect size
-lo = floor(min(toy_data$lfc, na.rm = TRUE))
-up = ceiling(max(toy_data$lfc, na.rm=TRUE))
-mid = (lo + up)/2
+toy_data <- sample_dice_data1
 
-minsize = floor(min(-log10(toy_data$q), na.rm=TRUE))
-maxsize = ceiling(max(-log10(toy_data$q), na.rm=TRUE))
-midsize = ceiling(quantile(-log10(toy_data$q), c(0.5), na.rm=TRUE))
+lo      <- floor(min(toy_data$lfc, na.rm = TRUE))
+up      <- ceiling(max(toy_data$lfc, na.rm = TRUE))
+mid     <- (lo + up) / 2
+minsize <- floor(min(-log10(toy_data$q), na.rm = TRUE))
+maxsize <- ceiling(max(-log10(toy_data$q), na.rm = TRUE))
+midsize <- ceiling(quantile(-log10(toy_data$q), 0.5, na.rm = TRUE))
 
-#
-## PLOT
-#
-
-ggplot(toy_data, aes(x=specimen, y=taxon)) +
-  geom_dice(aes(dots=disease, fill=lfc, size=-log10(q), 
-                # Square dims
-                width = 0.5, height = 0.5),
-            # For legend display
-            show.legend=TRUE, 
-            # For legend position calculation
-            ndots=length(unique(toy_data$disease)),
-            # For aspect.ratio: ensure squares (now automatic with coord_fixed)
-            x_length = length(unique(toy_data$specimen)), 
-            y_length = length(unique(toy_data$taxon)), 
-  )+
-  scale_fill_continuous(name="lfc") +
-  scale_fill_gradient2(low = "#40004B", high = "#00441B", mid = "white",
-                       na.value = "white", 
-                       limit = c(lo, up),
-                       midpoint = mid, 
-                       name = "Log2FC") +
-  scale_size_continuous(limits = c(minsize, maxsize),
-                        breaks = c(minsize, midsize, maxsize),
-                        labels = c(10^minsize, 10^-midsize, 10^-maxsize),
-                        name = "q-value")
+ggplot(toy_data, aes(x = specimen, y = taxon)) +
+  geom_dice(
+    aes(dots = disease, fill = lfc, size = -log10(q), width = 0.5, height = 0.5),
+    na.rm       = TRUE,
+    show.legend = TRUE,
+    ndots       = length(unique(toy_data$disease)),
+    x_length    = length(unique(toy_data$specimen)),
+    y_length    = length(unique(toy_data$taxon))
+  ) +
+  scale_fill_continuous(name = "lfc") +
+  scale_fill_gradient2(
+    low = "#40004B", high = "#00441B", mid = "white",
+    na.value = "white", limit = c(lo, up), midpoint = mid,
+    name = "Log2FC"
+  ) +
+  scale_size_continuous(
+    range  = c(2, 8),
+    limits = c(minsize, maxsize),
+    breaks = c(minsize, midsize, maxsize),
+    labels = c(10^minsize, 10^-midsize, 10^-maxsize),
+    name   = "q-value"
+  )
 ```
 
 ![](demo_output/example1.png)
@@ -75,51 +66,19 @@ ggplot(toy_data, aes(x=specimen, y=taxon)) +
 ## Example: miRNA dysregulation
 
 ```r
-## ---- SETUP ----
 library(ggplot2)
 library(ggdiceplot)
 
-## ---- LOAD SAMPLE DATA (from package) ----
-# If internal dataset exists, use it; otherwise fall back to df_dice
-if ("sample_dice_miRNA" %in% data(package="ggdiceplot")$results[, "Item"]) {
-  data("sample_dice_miRNA", package = "ggdiceplot")
-  df_dice <- sample_dice_miRNA
-} else {
-  message("sample_dice_miRNA not found in package — using inline example.")
-  
-  df_dice <- data.frame(
-    miRNA = c("miR-1","miR-1","miR-1","miR-2","miR-2","miR-2","miR-3","miR-3"),
-    Compound = c("Compound_1","Compound_1","Compound_2","Compound_1","Compound_2","Compound_3","Compound_3","Compound_1"),
-    Organ = c("Lung","Brain","Liver","Lung","Liver","Brain","Liver","Brain"),
-    log2FC = c(1.2,-0.8,0.3,-1.1,0.6,2,-0.5,1.5)
-  )
-  
-  df_dice$direction <- ifelse(df_dice$log2FC > 0.5, "Up",
-                              ifelse(df_dice$log2FC < -0.5, "Down","Unchanged"))
-  
-  df_dice$Organ     <- factor(df_dice$Organ, levels = c("Lung","Liver","Brain"))
-  df_dice$direction <- factor(df_dice$direction, levels = c("Down","Unchanged","Up"))
-  df_dice$Compound  <- factor(df_dice$Compound, levels = c("Compound_1","Compound_2","Compound_3"))
-  df_dice$miRNA     <- factor(df_dice$miRNA)
-}
+data("sample_dice_miRNA", package = "ggdiceplot")
+df_dice <- sample_dice_miRNA
 
-## ---- COLORS ----
-direction_colors <- c(
-  Down      = "#2166ac",
-  Unchanged = "grey80",
-  Up        = "#b2182b"
-)
+direction_colors <- c(Down = "#2166ac", Unchanged = "grey80", Up = "#b2182b")
 
-## ---- PLOT ----
-p_dice <- ggplot(df_dice, aes(x = miRNA, y = Compound)) +
+ggplot(df_dice, aes(x = miRNA, y = Compound)) +
   geom_dice(
-    aes(
-      dots  = Organ,
-      fill  = direction,
-      width = 0.8,
-      height = 0.8
-    ),
+    aes(dots = Organ, fill = direction, width = 0.8, height = 0.8),
     show.legend = TRUE,
+    pip_fill    = 1.0,
     ndots       = length(levels(df_dice$Organ)),
     x_length    = length(levels(df_dice$miRNA)),
     y_length    = length(levels(df_dice$Compound))
@@ -136,12 +95,11 @@ p_dice <- ggplot(df_dice, aes(x = miRNA, y = Compound)) +
     x = "miRNA",
     y = "Compound"
   )
-
-print(p_dice)
 ```
-![](demo_output/example2.png)
 
-## Example 3: ZEBRA Domino Plot
+![](demo_output/example_miRNA.png)
+
+## Example: ZEBRA Domino Plot
 
 This example demonstrates using `geom_dice()` to create a domino plot for gene expression analysis across multiple diseases and cell types.
 
@@ -151,82 +109,61 @@ library(ggdiceplot)
 library(dplyr)
 library(tidyr)
 
-# Load ZEBRA dataset
 zebra.df <- read.csv("legacy examples/data/ZEBRA_sex_degs_set.csv")
-
-# Select genes of interest
 genes <- c("SPP1", "APOE", "SERPINA1", "PINK1", "ANGPT1", "ANGPT2", "APP", "CLU", "ABCA7")
 
-# Filter and prepare data
-zebra.df <- zebra.df %>% 
+zebra.df <- zebra.df %>%
   filter(gene %in% genes) %>%
   filter(contrast %in% c("MS-CT", "AD-CT", "ASD-CT", "FTD-CT", "HD-CT")) %>%
   mutate(
     cell_type = factor(cell_type, levels = sort(unique(cell_type))),
-    contrast = factor(contrast, levels = c("MS-CT", "AD-CT", "ASD-CT", "FTD-CT", "HD-CT")),
-    gene = factor(gene, levels = genes)
+    contrast  = factor(contrast, levels = c("MS-CT", "AD-CT", "ASD-CT", "FTD-CT", "HD-CT")),
+    gene      = factor(gene, levels = genes)
   ) %>%
   filter(PValue < 0.05) %>%
   group_by(gene, cell_type, contrast) %>%
-  summarise(
-    logFC = mean(logFC, na.rm = TRUE),
-    FDR = min(FDR, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  complete(gene, cell_type, contrast, fill = list(logFC = NA, FDR = NA))
+  summarise(logFC = mean(logFC, na.rm = TRUE), FDR = min(FDR, na.rm = TRUE), .groups = "drop") %>%
+  complete(gene, cell_type, contrast, fill = list(logFC = NA_real_, FDR = NA_real_))
 
-# Calculate scale limits
-lo <- floor(min(zebra.df$logFC, na.rm = TRUE))
-up <- ceiling(max(zebra.df$logFC, na.rm = TRUE))
-mid <- (lo + up) / 2
-
+lo      <- floor(min(zebra.df$logFC, na.rm = TRUE))
+up      <- ceiling(max(zebra.df$logFC, na.rm = TRUE))
+mid     <- (lo + up) / 2
 minsize <- floor(min(-log10(zebra.df$FDR), na.rm = TRUE))
 maxsize <- ceiling(max(-log10(zebra.df$FDR), na.rm = TRUE))
-midsize <- ceiling(quantile(-log10(zebra.df$FDR), c(0.5), na.rm = TRUE))
+midsize <- ceiling(quantile(-log10(zebra.df$FDR), 0.5, na.rm = TRUE))
 
-# Create domino plot
 ggplot(zebra.df, aes(x = gene, y = cell_type)) +
   geom_dice(
-    aes(
-      dots = contrast,
-      fill = logFC,
-      size = -log10(FDR)
-    ),
-    na.rm = TRUE,
+    aes(dots = contrast, fill = logFC, size = -log10(FDR)),
+    na.rm       = TRUE,
     show.legend = TRUE,
-    ndots = 5,  # We have 5 contrasts
-    x_length = length(genes),
-    y_length = length(unique(zebra.df$cell_type))
+    ndots       = 5,
+    x_length    = length(genes),
+    y_length    = length(unique(zebra.df$cell_type))
   ) +
   scale_fill_gradient2(
-    low = "#40004B",
-    high = "#00441B",
-    mid = "white",
-    na.value = "white",
-    limit = c(lo, up),
-    midpoint = mid,
+    low = "#40004B", high = "#00441B", mid = "white",
+    na.value = "white", limit = c(lo, up), midpoint = mid,
     name = "Log2FC"
   ) +
   scale_size_continuous(
     limits = c(minsize, maxsize),
     breaks = c(minsize, midsize, maxsize),
     labels = c(10^minsize, 10^-midsize, 10^-maxsize),
-    name = "FDR"
+    name   = "FDR"
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-    axis.text.y = element_text(size = 12),
-    legend.text = element_text(size = 12),
-    legend.title = element_text(size = 12),
-    legend.key = element_blank(),
+    axis.text.x     = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y     = element_text(size = 12),
+    legend.text     = element_text(size = 12),
+    legend.title    = element_text(size = 12),
+    legend.key      = element_blank(),
     legend.key.size = unit(0.8, "cm")
   ) +
-  labs(
-    x = "Gene",
-    y = "Cell Type",
-    title = "ZEBRA Sex DEGs Domino Plot"
-  )
+  labs(x = "Gene", y = "Cell Type", title = "ZEBRA Sex DEGs Domino Plot")
+
+ggsave("ZEBRA_domino_example.png", width = 12, height = 14, dpi = 300)
 ```
 
 ![](demo_output/ZEBRA_domino_example.png)
@@ -234,40 +171,35 @@ ggplot(zebra.df, aes(x = gene, y = cell_type)) +
 ## Features
 
 - **1:1 Aspect Ratio**: Dice automatically appear as perfect squares using `coord_fixed(ratio = 1)`
-- **Automatic Sizing**: Dice automatically scale based on grid density
-- **Boundary Safety**: Dice stay within plot boundaries
-- **Flexible Mapping**: Map any categories to dice positions 1-6
+- **Automatic Pip Scaling**: `pip_fill` (0–1) controls pip diameter as a fraction of the maximum available space. `pip_fill = 1.0` fills the die face fully; set to `NULL` to use a fixed size
+- **Boundary Safety**: Pips never exceed tile borders; positions shift inward as density increases
+- **Flexible Mapping**: Map any categories to dice positions 1–6
 - **Multiple Applications**: Gene expression, survey data, clinical trials, market research
-- **Customizable**: Control dice size, colors, and positioning
+- **Customizable**: Control dice size, colors, pip density, and positioning
 
-## Important Update
+## Key Parameters
 
-**Automatic Aspect Ratio Control**: As of the latest version, `geom_dice()` automatically applies `coord_fixed(ratio = 1)` to ensure dice appear as perfect squares. The `x_length` and `y_length` parameters are maintained for compatibility but no longer affect aspect ratio.
+| Parameter | Description |
+|-----------|-------------|
+| `dots` | Aesthetic mapping — which category occupies which pip position |
+| `pip_fill` | Pip diameter as fraction of max space (default `0.75`; `1.0` = tight fill; `NULL` = fixed size) |
+| `ndots` | Number of pip positions on each die face (1–6) |
+| `x_length`, `y_length` | Grid dimensions (used for aspect ratio) |
+| `na.rm` | Drop observations with missing size/fill values |
 
 ## Key Functions
 
 - `geom_dice()`: Main geom for creating dice plots with automatic 1:1 aspect ratio
 - `theme_dice()`: Minimal theme optimized for dice plots
-- `create_dice_positions()`: Generate standard dice dot positions
-- `make_offsets()`: Calculate dice dot positions for rendering
+- `create_dice_positions()`: Generate standard dice dot position layouts
+- `make_offsets()`: Calculate pip positions for rendering
 
-## Demo Examples
+## Running the Examples
 
-See the `demo_output/` directory for:
-- Basic functionality examples
-- Real-world usage scenarios (ZEBRA gene expression analysis)
-- Boundary validation tests
-- Custom sizing demonstrations
-
-Run the demo scripts:
 ```bash
-cd demo_output
-Rscript create_demo_plots.R
-Rscript usage_examples.R
-
-# Run the ZEBRA domino example
-cd examples
-Rscript zebra_domino_example.R
+# From the project root
+Rscript demo_output/create_demo_plots.R
+Rscript test_simple_dice.R
 ```
 
 ## Package Structure
@@ -275,21 +207,14 @@ Rscript zebra_domino_example.R
 - `R/`: Core package functions
 - `data/`: Sample datasets
 - `demo_output/`: Example plots and output images
-- `examples/`: Real-world usage examples (ZEBRA domino plot)
+- `examples/`: Real-world usage examples
 - `legacy examples/`: Legacy examples and data files
 - `man/`: Documentation files
-- `inst/`: Package installation files
-
-## Documentation
-
-- Package functions: `help(package = "ggdiceplot")`
-- Main function: `?geom_dice`
-- Vignette: `vignette("introduction", package = "ggdiceplot")`
 
 ## Citation
 
 If you use this code or the R and Python packages for your own work, please cite diceplot as:
-  
+
 > M. Flotho, P. Flotho, A. Keller, "Diceplot: A package for high dimensional categorical data visualization," arxiv, 2024. [doi:10.48550/arXiv.2410.23897](https://doi.org/10.48550/arXiv.2410.23897)
 
 BibTeX entry:

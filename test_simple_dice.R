@@ -147,8 +147,7 @@ p_size_mapped <- ggplot(test_data_sized, aes(x = x, y = y)) +
     aes(dots = category, fill = value, size = sig),
     ndots    = 4,
     x_length = 4,
-    y_length = 2,
-    pip_fill = 1.0
+    y_length = 2
   ) +
   scale_fill_gradient2(
     low = "#2166AC", high = "#762A83", mid = "white",
