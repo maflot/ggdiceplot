@@ -22,13 +22,14 @@
 #' @param show.legend Whether to include in legend.
 #' @param inherit.aes If `FALSE`, overrides the default aesthetics.
 #' @param ndots Integer (1–6): number of positions shown per dice.
-#' @param x_length, x_length Numeric: used for aspect ratio.
-#' @param y_length, y_length Numeric: used for aspect ratio.
-#' @param pip_fill Numeric (0–1): fraction of inter-pip spacing used as pip
-#'   diameter for automatic size scaling. `1.0` means pips just touch; `0.75`
-#'   (default) leaves a small gap. Set to `NULL` to disable auto-scaling and
-#'   use the `size` aesthetic directly. Auto-scaling is always skipped when
-#'   `size` is mapped to a variable in `aes()`.
+#' @param x_length Numeric: number of x categories (used for aspect ratio).
+#' @param y_length Numeric: number of y categories (used for aspect ratio).
+#' @param pip_fill Numeric (0–1): controls pip diameter relative to the
+#'   maximum available space. When `size` is constant (not mapped), all pips
+#'   are drawn at `pip_fill` fraction of the die face. When `size` is mapped
+#'   to a variable, pips scale between 0.25 (smallest value) and `pip_fill`
+#'   (largest value) of the maximum pip diameter. Default is `0.75`. Set to
+#'   `NULL` to disable auto-scaling and use the raw `size` aesthetic.
 #' @param ... Additional arguments passed to `layer()`.
 #'
 #' @return A `ggplot2` layer that draws dice with categorical dot encodings.

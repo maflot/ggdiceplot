@@ -26,6 +26,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom dplyr bind_rows distinct filter
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 Geom
 #' @importFrom ggplot2 ggproto
@@ -36,5 +37,6 @@
 #' @importFrom grid pointsGrob
 #' @importFrom grid rectGrob
 #' @importFrom grid unit
+#' @importFrom tibble column_to_rownames remove_rownames
 ## usethis namespace: end
 NULL

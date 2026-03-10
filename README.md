@@ -27,8 +27,8 @@ install.packages(c("ggdiceplot"))
 library(ggplot2)
 library(ggdiceplot)
 
-data("sample_dice_data1", package = "ggdiceplot")
-toy_data <- sample_dice_data1
+data("sample_dice_data2", package = "ggdiceplot")
+toy_data <- sample_dice_data2
 
 lo      <- floor(min(toy_data$lfc, na.rm = TRUE))
 up      <- ceiling(max(toy_data$lfc, na.rm = TRUE))
@@ -61,7 +61,7 @@ ggplot(toy_data, aes(x = specimen, y = taxon)) +
   )
 ```
 
-![](demo_output/example1.png)
+![](demo_output/example2.png)
 
 ## Example: miRNA dysregulation
 
