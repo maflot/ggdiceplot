@@ -19,18 +19,16 @@ make_dice_plot <- function(toy_data) {
   maxsize <- ceiling(max(-log10(toy_data$q), na.rm = TRUE))
   midsize <- ceiling(quantile(-log10(toy_data$q), 0.5, na.rm = TRUE))
 
-  # size is mapped to -log10(q): pip_fill is not used (auto-scaling is bypassed
-  # when the user maps size to a variable; pip sizes come from the scale instead).
   ggplot(toy_data, aes(x = specimen, y = taxon)) +
     geom_dice(
-      aes(dots = disease, fill = lfc, size = -log10(q), width = 0.5, height = 0.5),
+      aes(dots = disease, fill = lfc, size = -log10(q), width = 0.9, height = 0.9),
       na.rm       = TRUE,
       show.legend = TRUE,
+      pip_fill    = 0.9,
       ndots       = length(unique(toy_data$disease)),
       x_length    = length(unique(toy_data$specimen)),
       y_length    = length(unique(toy_data$taxon))
     ) +
-    scale_fill_continuous(name = "lfc") +
     scale_fill_gradient2(
       low      = "#40004B", high = "#00441B", mid = "white",
       na.value = "white", limit = c(lo, up), midpoint = mid,
@@ -49,7 +47,7 @@ make_dice_plot <- function(toy_data) {
 cat("1. Creating example1...\n")
 load("data/sample_dice_data1.rda")
 ggsave("demo_output/example1.png", make_dice_plot(sample_dice_data1),
-       width = 10, height = 10, dpi = 300)
+       width = 12, height = 12, dpi = 300)
 
 # ---- Example 2 --------------------------------------------------------------
 cat("2. Creating example2...\n")

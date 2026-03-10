@@ -177,7 +177,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
 
                                # Shift pip centers toward tile center proportionally to pip_fill,
                                # so larger pips fit without clipping at tile borders.
-                               if (auto_scale && !is.null(pip_fill) && pip_fill > 0 && s_tight < 1) {
+                               if (!is.null(pip_fill) && pip_fill > 0 && s_tight < 1) {
                                  offset_scale <- 1 - pip_fill * (1 - s_tight)
                                  point_df$x   <- point_df$x_coord + (point_df$x - point_df$x_coord) * offset_scale
                                  point_df$y   <- point_df$y_coord + (point_df$y - point_df$y_coord) * offset_scale
@@ -221,7 +221,7 @@ dice_grob <- function(point_df, tile_df, panel_params, coord,
 drawDetails.DiceGrob <- function(x, recording) {
   point_df <- x$point_df
 
-  if (x$auto_scale && !is.null(x$pip_fill)) {
+  if (!is.null(x$pip_fill)) {
     # Convert tile width from data units to mm using the live panel viewport.
     panel_w_mm <- grid::convertUnit(grid::unit(1, "npc"), "mm", valueOnly = TRUE)
 
@@ -229,12 +229,28 @@ drawDetails.DiceGrob <- function(x, recording) {
     ref_npc <- x$coord$transform(ref_df, x$panel_params)
     tile_w_mm <- abs(ref_npc$x[2] - ref_npc$x[1]) * panel_w_mm
 
-    # pip diameter = 2 * max_pip_radius (in mm) * fill fraction
-    # max_pip_radius already accounts for both inter-pip and border constraints.
-    pip_size_mm <- 2 * (x$max_pip_radius / x$tile_width) * tile_w_mm * x$pip_fill
+    # Maximum pip diameter in mm (accounts for inter-pip and border constraints).
+    max_pip_mm <- 2 * (x$max_pip_radius / x$tile_width) * tile_w_mm
 
-    if (is.finite(pip_size_mm) && pip_size_mm > 0) {
-      point_df$size <- pip_size_mm
+    if (x$auto_scale) {
+      # Constant size: all pips at pip_fill fraction of max.
+      pip_size_mm <- max_pip_mm * x$pip_fill
+      if (is.finite(pip_size_mm) && pip_size_mm > 0) {
+        point_df$size <- pip_size_mm
+      }
+    } else {
+      # Variable size: map to [min_fill, pip_fill] of max pip diameter.
+      # Default: smallest value -> 0.25, largest -> pip_fill (typically 1.0).
+      min_fill   <- 0.25
+      sizes      <- point_df$size
+      size_range <- range(sizes, na.rm = TRUE)
+      if (diff(size_range) > 0) {
+        normalized <- (sizes - size_range[1]) / diff(size_range)
+        fill_fracs <- min_fill + (x$pip_fill - min_fill) * normalized
+      } else {
+        fill_fracs <- rep(x$pip_fill, length(sizes))
+      }
+      point_df$size <- max_pip_mm * fill_fracs
     }
   }
 
