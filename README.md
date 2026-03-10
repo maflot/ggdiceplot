@@ -215,16 +215,19 @@ Rscript test_simple_dice.R
 
 If you use this code or the R and Python packages for your own work, please cite diceplot as:
 
-> M. Flotho, P. Flotho, A. Keller, "Diceplot: A package for high dimensional categorical data visualization," arxiv, 2024. [doi:10.48550/arXiv.2410.23897](https://doi.org/10.48550/arXiv.2410.23897)
+> M. Flotho, P. Flotho, A. Keller, "DicePlot: a package for high-dimensional categorical data visualization," *Bioinformatics*, vol. 42, no. 2, btaf337, 2026.
 
 BibTeX entry:
-```
-@article{flotea2024,
-    author = {Flotho, M. and Flotho, P. and Keller, A.},
-    title = {Diceplot: A package for high dimensional categorical data visualization},
-    year = {2024},
-    journal = {arXiv preprint},
-    doi = {https://doi.org/10.48550/arXiv.2410.23897}
+```bibtex
+@article{flotho2026diceplot,
+    title     = {DicePlot: a package for high-dimensional categorical data visualization},
+    author    = {Flotho, Matthias and Flotho, Philipp and Keller, Andreas},
+    journal   = {Bioinformatics},
+    volume    = {42},
+    number    = {2},
+    pages     = {btaf337},
+    year      = {2026},
+    publisher = {Oxford University Press}
 }
 ```
 
