@@ -1,0 +1,21 @@
+[workspace]
+name = "ggdiceplot"
+version = "1.0.0"
+description = "DicePlot Visualization for ggplot2"
+channels = ["conda-forge"]
+platforms = ["osx-arm64"]
+
+[dependencies]
+r-base = ">=4.5"
+r-ggplot2 = ">=3.4.0"
+r-dplyr = "*"
+r-tibble = "*"
+r-scales = "*"
+r-legendry = "*"
+r-patchwork = "*"
+r-tidyr = "*"
+r-devtools = "*"
+r-rcmdcheck = "*"
+
+[tasks]
+demo = "Rscript test_simple_dice.R"
