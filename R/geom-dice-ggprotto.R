@@ -21,7 +21,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                height = 0.5
                              ),
 
-                             extra_params = c("na.rm", "ndots", "x_length", "y_length", "pip_fill"),
+                             extra_params = c("na.rm", "ndots", "x_length", "y_length", "pip_scale"),
                              
                              setup_data = function(data, params, ...) {
                                data$na.rm <- data$na.rm %||% params$na.rm
@@ -62,7 +62,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                              draw_panel = function(data, panel_params, coord,
                                                       na.rm = FALSE, ndots = NULL,
                                                       x_length = NULL, y_length = NULL,
-                                                      pip_fill = 0.75) {
+                                                      pip_scale = 0.75) {
                                data$x <- as.numeric(data$x)
                                data$y <- as.numeric(data$y)
 
@@ -175,10 +175,10 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                # Auto-scale pip size only when size is constant (not user-mapped).
                                auto_scale <- length(unique(data$size)) == 1
 
-                               # Shift pip centers toward tile center proportionally to pip_fill,
+                               # Shift pip centers toward tile center proportionally to pip_scale,
                                # so larger pips fit without clipping at tile borders.
-                               if (!is.null(pip_fill) && pip_fill > 0 && s_tight < 1) {
-                                 offset_scale <- 1 - pip_fill * (1 - s_tight)
+                               if (!is.null(pip_scale) && pip_scale > 0 && s_tight < 1) {
+                                 offset_scale <- 1 - pip_scale * (1 - s_tight)
                                  point_df$x   <- point_df$x_coord + (point_df$x - point_df$x_coord) * offset_scale
                                  point_df$y   <- point_df$y_coord + (point_df$y - point_df$y_coord) * offset_scale
                                }
@@ -190,7 +190,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                  coord          = coord,
                                  max_pip_radius = pip_radius_tight,
                                  tile_width     = tile_width,
-                                 pip_fill       = pip_fill,
+                                 pip_scale       = pip_scale,
                                  auto_scale     = auto_scale
                                )
                              }
@@ -202,7 +202,7 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
 # ---------------------------------------------------------------------------
 
 dice_grob <- function(point_df, tile_df, panel_params, coord,
-                      max_pip_radius, tile_width, pip_fill, auto_scale) {
+                      max_pip_radius, tile_width, pip_scale, auto_scale) {
   grid::grob(
     point_df     = point_df,
     tile_df      = tile_df,
@@ -210,7 +210,7 @@ dice_grob <- function(point_df, tile_df, panel_params, coord,
     coord        = coord,
     max_pip_radius = max_pip_radius,
     tile_width   = tile_width,
-    pip_fill     = pip_fill,
+    pip_scale     = pip_scale,
     auto_scale   = auto_scale,
     cl = "DiceGrob"
   )
@@ -221,7 +221,7 @@ dice_grob <- function(point_df, tile_df, panel_params, coord,
 drawDetails.DiceGrob <- function(x, recording) {
   point_df <- x$point_df
 
-  if (!is.null(x$pip_fill)) {
+  if (!is.null(x$pip_scale)) {
     # Convert tile width from data units to mm using the live panel viewport.
     panel_w_mm <- grid::convertUnit(grid::unit(1, "npc"), "mm", valueOnly = TRUE)
 
@@ -233,22 +233,22 @@ drawDetails.DiceGrob <- function(x, recording) {
     max_pip_mm <- 2 * (x$max_pip_radius / x$tile_width) * tile_w_mm
 
     if (x$auto_scale) {
-      # Constant size: all pips at pip_fill fraction of max.
-      pip_size_mm <- max_pip_mm * x$pip_fill
+      # Constant size: all pips at pip_scale fraction of max.
+      pip_size_mm <- max_pip_mm * x$pip_scale
       if (is.finite(pip_size_mm) && pip_size_mm > 0) {
         point_df$size <- pip_size_mm
       }
     } else {
-      # Variable size: map to [min_fill, pip_fill] of max pip diameter.
-      # Default: smallest value -> 0.25, largest -> pip_fill (typically 1.0).
+      # Variable size: map to [min_fill, pip_scale] of max pip diameter.
+      # Default: smallest value -> 0.25, largest -> pip_scale (typically 1.0).
       min_fill   <- 0.25
       sizes      <- point_df$size
       size_range <- range(sizes, na.rm = TRUE)
       if (diff(size_range) > 0) {
         normalized <- (sizes - size_range[1]) / diff(size_range)
-        fill_fracs <- min_fill + (x$pip_fill - min_fill) * normalized
+        fill_fracs <- min_fill + (x$pip_scale - min_fill) * normalized
       } else {
-        fill_fracs <- rep(x$pip_fill, length(sizes))
+        fill_fracs <- rep(x$pip_scale, length(sizes))
       }
       point_df$size <- max_pip_mm * fill_fracs
     }

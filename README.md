@@ -42,7 +42,7 @@ ggplot(toy_data, aes(x = specimen, y = taxon)) +
     aes(dots = disease, fill = lfc, size = -log10(q), width = 0.9, height = 0.9),
     na.rm       = TRUE,
     show.legend = TRUE,
-    pip_fill    = 0.9,
+    pip_scale    = 0.9,
     ndots       = length(unique(toy_data$disease)),
     x_length    = length(unique(toy_data$specimen)),
     y_length    = length(unique(toy_data$taxon))
@@ -78,7 +78,7 @@ ggplot(df_dice, aes(x = miRNA, y = Compound)) +
   geom_dice(
     aes(dots = Organ, fill = direction, width = 0.8, height = 0.8),
     show.legend = TRUE,
-    pip_fill    = 1.0,
+    pip_scale    = 1.0,
     ndots       = length(levels(df_dice$Organ)),
     x_length    = length(levels(df_dice$miRNA)),
     y_length    = length(levels(df_dice$Compound))
@@ -171,7 +171,7 @@ ggsave("ZEBRA_domino_example.png", width = 12, height = 14, dpi = 300)
 ## Features
 
 - **1:1 Aspect Ratio**: Dice automatically appear as perfect squares using `coord_fixed(ratio = 1)`
-- **Automatic Pip Scaling**: `pip_fill` (0–1) controls pip diameter as a fraction of the maximum available space. `pip_fill = 1.0` fills the die face fully; set to `NULL` to use a fixed size
+- **Automatic Pip Scaling**: `pip_scale` (0–1) controls pip diameter as a fraction of the maximum available space. `pip_scale = 1.0` fills the die face fully; set to `NULL` to use a fixed size
 - **Boundary Safety**: Pips never exceed tile borders; positions shift inward as density increases
 - **Flexible Mapping**: Map any categories to dice positions 1–6
 - **Multiple Applications**: Gene expression, survey data, clinical trials, market research
@@ -182,7 +182,7 @@ ggsave("ZEBRA_domino_example.png", width = 12, height = 14, dpi = 300)
 | Parameter | Description |
 |-----------|-------------|
 | `dots` | Aesthetic mapping — which category occupies which pip position |
-| `pip_fill` | Pip diameter as fraction of max space (default `0.75`; `1.0` = tight fill; `NULL` = fixed size) |
+| `pip_scale` | Pip diameter as fraction of max space (default `0.75`; `1.0` = tight fill; `NULL` = fixed size) |
 | `ndots` | Number of pip positions on each die face (1–6) |
 | `x_length`, `y_length` | Grid dimensions (used for aspect ratio) |
 | `na.rm` | Drop observations with missing size/fill values |

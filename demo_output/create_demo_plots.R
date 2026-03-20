@@ -24,7 +24,7 @@ make_dice_plot <- function(toy_data) {
       aes(dots = disease, fill = lfc, size = -log10(q), width = 0.9, height = 0.9),
       na.rm       = TRUE,
       show.legend = TRUE,
-      pip_fill    = 0.9,
+      pip_scale    = 0.9,
       ndots       = length(unique(toy_data$disease)),
       x_length    = length(unique(toy_data$specimen)),
       y_length    = length(unique(toy_data$taxon))
@@ -61,8 +61,8 @@ load("data/sample_dice_large.rda")
 ggsave("demo_output/example_large.png", make_dice_plot(sample_dice_large),
        width = 10, height = 30, dpi = 300)
 
-# ---- Example 4: fill-only, pip_fill = 1.0 -----------------------------------
-# No size mapping → auto-scaling active; pip_fill = 1.0 fills die face fully.
+# ---- Example 4: fill-only, pip_scale = 1.0 -----------------------------------
+# No size mapping → auto-scaling active; pip_scale = 1.0 fills die face fully.
 cat("4. Creating example4_fill_only...\n")
 load("data/sample_dice_data1.rda")
 toy_data <- sample_dice_data1
@@ -75,7 +75,7 @@ pex4 <- ggplot(toy_data, aes(x = specimen, y = taxon)) +
     aes(dots = disease, fill = lfc, width = 0.9, height = 0.9),
     na.rm       = TRUE,
     show.legend = TRUE,
-    pip_fill    = 1.0,
+    pip_scale    = 1.0,
     ndots       = length(unique(toy_data$disease)),
     x_length    = length(unique(toy_data$specimen)),
     y_length    = length(unique(toy_data$taxon))
@@ -86,7 +86,7 @@ pex4 <- ggplot(toy_data, aes(x = specimen, y = taxon)) +
     name = "Log2FC"
   ) +
   labs(
-    title    = "Fill-only dice plot  (pip_fill = 1.0)",
+    title    = "Fill-only dice plot  (pip_scale = 1.0)",
     subtitle = "Pips fill the die face at maximal density"
   )
 

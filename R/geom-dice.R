@@ -24,10 +24,10 @@
 #' @param ndots Integer (1–6): number of positions shown per dice.
 #' @param x_length Numeric: number of x categories (used for aspect ratio).
 #' @param y_length Numeric: number of y categories (used for aspect ratio).
-#' @param pip_fill Numeric (0–1): controls pip diameter relative to the
+#' @param pip_scale Numeric (0–1): controls pip diameter relative to the
 #'   maximum available space. When `size` is constant (not mapped), all pips
-#'   are drawn at `pip_fill` fraction of the die face. When `size` is mapped
-#'   to a variable, pips scale between 0.25 (smallest value) and `pip_fill`
+#'   are drawn at `pip_scale` fraction of the die face. When `size` is mapped
+#'   to a variable, pips scale between 0.25 (smallest value) and `pip_scale`
 #'   (largest value) of the maximum pip diameter. Default is `0.75`. Set to
 #'   `NULL` to disable auto-scaling and use the raw `size` aesthetic.
 #' @param ... Additional arguments passed to `layer()`.
@@ -49,7 +49,7 @@
 geom_dice <- function(mapping = NULL, data = NULL,
                       stat = "identity", position = "identity",
                       ndots = NULL, x_length = NULL, y_length = NULL,
-                      pip_fill = 0.75,
+                      pip_scale = 0.75,
                       na.rm = FALSE, show.legend = TRUE, inherit.aes = TRUE, ...) {
 
   list(
@@ -66,7 +66,7 @@ geom_dice <- function(mapping = NULL, data = NULL,
         ndots = ndots,
         x_length = x_length,
         y_length = y_length,
-        pip_fill = pip_fill
+        pip_scale = pip_scale
       )
     ),
     theme_dice(x_length = x_length, y_length = y_length),

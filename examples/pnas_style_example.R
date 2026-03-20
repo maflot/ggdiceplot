@@ -230,11 +230,11 @@ print("- pnas_style_example.pdf")
 print("- pnas_inflammatory_subset.png")
 
 # ---------------------------------------------------------------------------
-# pip_fill demonstration: fill-only version (no size mapping)
+# pip_scale demonstration: fill-only version (no size mapping)
 # ---------------------------------------------------------------------------
 # When size is not mapped to a variable, geom_dice auto-scales each pip to
-# fill pip_fill * (available space per pip) at render time.
-# Use pip_fill = NULL to revert to the fixed size = 3 mm legacy behaviour.
+# fill pip_scale * (available space per pip) at render time.
+# Use pip_scale = NULL to revert to the fixed size = 3 mm legacy behaviour.
 
 # Aggregate to one row per gene/cell_type (collapse demographics)
 gene_data_agg <- gene_data %>%
@@ -249,7 +249,7 @@ gene_data_agg <- gene_data %>%
     cell_type = factor(cell_type, levels = unname(cell_type_names))
   )
 
-# -- Auto-scaled (default pip_fill = 0.75) -----------------------------------
+# -- Auto-scaled (default pip_scale = 0.75) -----------------------------------
 p_auto <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
   geom_dice(
     aes(dots = cell_type, fill = expression_level, width = 0.85, height = 0.85),
@@ -258,7 +258,7 @@ p_auto <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
     ndots       = length(unique(gene_data_agg$cell_type)),
     x_length    = length(top_genes),
     y_length    = length(cell_types)
-    # pip_fill defaults to 0.75
+    # pip_scale defaults to 0.75
   ) +
   scale_dots_discrete(guide = "none") +
   scale_fill_gradient2(
@@ -277,11 +277,11 @@ p_auto <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
   labs(
     x        = "Gene",
     y        = "Cell Type",
-    title    = "pip_fill = 0.75  (auto-scaled, default)",
+    title    = "pip_scale = 0.75  (auto-scaled, default)",
     subtitle = "No size mapping — pip diameter adapts to figure size"
   )
 
-# -- Fixed legacy size (pip_fill = NULL) -------------------------------------
+# -- Fixed legacy size (pip_scale = NULL) -------------------------------------
 p_fixed <- p_auto +
   geom_dice(
     aes(dots = cell_type, fill = expression_level, width = 0.85, height = 0.85),
@@ -290,10 +290,10 @@ p_fixed <- p_auto +
     ndots       = length(unique(gene_data_agg$cell_type)),
     x_length    = length(top_genes),
     y_length    = length(cell_types),
-    pip_fill    = NULL   # disables auto-scaling; falls back to size = 3 mm
+    pip_scale    = NULL   # disables auto-scaling; falls back to size = 3 mm
   ) +
   labs(
-    title    = "pip_fill = NULL  (fixed size = 3 mm)",
+    title    = "pip_scale = NULL  (fixed size = 3 mm)",
     subtitle = "Legacy behaviour — may leave excess whitespace at small figure sizes"
   )
 
@@ -306,7 +306,7 @@ p_fixed <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
     ndots       = length(unique(gene_data_agg$cell_type)),
     x_length    = length(top_genes),
     y_length    = length(cell_types),
-    pip_fill    = NULL
+    pip_scale    = NULL
   ) +
   scale_dots_discrete(guide = "none") +
   scale_fill_gradient2(
@@ -325,13 +325,13 @@ p_fixed <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
   labs(
     x        = "Gene",
     y        = "Cell Type",
-    title    = "pip_fill = NULL  (fixed size = 3 mm)",
+    title    = "pip_scale = NULL  (fixed size = 3 mm)",
     subtitle = "Legacy behaviour — may leave excess whitespace at small figure sizes"
   )
 
-ggsave("pnas_pip_fill_auto.png",  p_auto,  width = 14, height = 5, dpi = 300)
-ggsave("pnas_pip_fill_fixed.png", p_fixed, width = 14, height = 5, dpi = 300)
+ggsave("pnas_pip_scale_auto.png",  p_auto,  width = 14, height = 5, dpi = 300)
+ggsave("pnas_pip_scale_fixed.png", p_fixed, width = 14, height = 5, dpi = 300)
 
-print("pip_fill comparison plots created:")
-print("- pnas_pip_fill_auto.png   (pip_fill = 0.75, auto-scaled)")
-print("- pnas_pip_fill_fixed.png  (pip_fill = NULL, fixed size = 3 mm)")
+print("pip_scale comparison plots created:")
+print("- pnas_pip_scale_auto.png   (pip_scale = 0.75, auto-scaled)")
+print("- pnas_pip_scale_fixed.png  (pip_scale = NULL, fixed size = 3 mm)")
