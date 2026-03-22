@@ -1,6 +1,7 @@
 #' @rdname geom_dice
 #' @format NULL
 #' @usage NULL
+#' @keywords internal
 #' @export
 GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
 

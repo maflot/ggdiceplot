@@ -76,4 +76,4 @@ df <- data.frame(
 ggplot(df, aes(x, y, dots = dots)) +
   geom_dice(ndots = 6, x_length = 3, y_length = 1)
 }
-\keyword{datasets}
+\keyword{internal}

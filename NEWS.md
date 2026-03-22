@@ -24,26 +24,45 @@
 
 ## Breaking changes
 
-* **Minimum R version raised to 4.1.0** (was 4.0.0). R 4.1 is required for
-  the native pipe operator (`|>`) used internally.
+### Visual output changes (existing plots will look different)
 
-* **`tibble` is now a hard dependency** — added to `Imports` for
-  `column_to_rownames()` / `remove_rownames()`.
+* **Default pip sizing changed** — Pips are now auto-scaled to fill the die
+  face via the new `pip_scale` parameter (default `0.75`). In v1.0.0 pips used
+  the raw `size` aesthetic (default `3`), which often left excessive whitespace
+  or caused pips to overflow tile borders at certain figure sizes.
+  **Migration:** add `pip_scale = NULL` to your `geom_dice()` call to restore
+  the exact v1.0.0 appearance.
+
+* **Legend key for unmapped fill** — When `fill` is not mapped, legend keys now
+  draw a solid black dot instead of an empty circle, improving readability.
+  This is a cosmetic change with no opt-out.
+
+* **Axis scale expansion** — Edge tiles are no longer clipped because
+  `setup_data` now reports tile extents to ggplot2. Plots may show slightly
+  more padding around the border compared to v1.0.0.
+
+### API changes
 
 * **`draw_panel` signature changed** — The method now takes explicit named
   arguments (`na.rm`, `ndots`, `x_length`, `y_length`, `pip_scale`) instead of
   `params, ...`. Code that subclassed `GeomDice` or called `draw_panel`
   directly will need updating.
 
+### Data / dependency changes
+
 * **Sample datasets restructured**:
     - `sample_dice_data1`: 48 rows → 160 rows (8 taxa × 4 diseases × 5
       specimens). Columns are the same but `lfc` and `q` may now contain `NA`.
     - `sample_dice_data2`: 48 rows → 160 rows; the `replicate` column has been
       removed. Column count changed from 6 to 5.
+    Scripts that reference `sample_dice_data2$replicate` or hard-code row
+    counts from either dataset will break.
 
-* **Legend key for unmapped fill** — When `fill` is not mapped, legend keys now
-  draw a solid black dot instead of an empty circle, making spatial/dots-only
-  legends more readable.
+* **`tibble` is now a hard dependency** — added to `Imports` for
+  `column_to_rownames()` / `remove_rownames()`.
+
+* **Minimum R version raised to 4.1.0** (was 4.0.0). R 4.1 is required for
+  the native pipe operator (`|>`) used internally.
 
 ## Minor changes
 
