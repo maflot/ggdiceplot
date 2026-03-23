@@ -5,13 +5,13 @@
 \alias{sample_dice_data1}
 \title{Sample Dice Dataset for Visualization}
 \format{
-A data frame with 48 rows and 5 columns:
+A data frame with 160 rows and 5 columns:
 \describe{
-\item{taxon}{Character. Microbial taxon name.}
-\item{disease}{Character. Disease condition (e.g., Caries, Periodontitis, etc.).}
-\item{specimen}{Character. Body site specimen (e.g., Saliva, Plaque).}
-\item{lfc}{Numeric. Simulated log2 fold change value.}
-\item{q}{Numeric. Simulated adjusted p-value (q-value).}
+\item{taxon}{Character. Microbial taxon name (8 taxa).}
+\item{disease}{Character. Disease condition (Caries, Periodontitis, Healthy, Gingivitis).}
+\item{specimen}{Character. Body site specimen (Saliva, Plaque, Tongue, Buccal, Gingival).}
+\item{lfc}{Numeric. Simulated log2 fold change value; may contain NA.}
+\item{q}{Numeric. Simulated adjusted p-value (q-value); may contain NA.}
 }
 }
 \usage{

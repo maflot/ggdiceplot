@@ -14,6 +14,7 @@ geom_dice(
   ndots = NULL,
   x_length = NULL,
   y_length = NULL,
+  pip_scale = 0.75,
   na.rm = FALSE,
   show.legend = TRUE,
   inherit.aes = TRUE,
@@ -36,9 +37,16 @@ Must include:
 
 \item{ndots}{Integer (1–6): number of positions shown per dice.}
 
-\item{x_length, }{x_length Numeric: used for aspect ratio.}
+\item{x_length}{Numeric: number of x categories (used for aspect ratio).}
 
-\item{y_length, }{y_length Numeric: used for aspect ratio.}
+\item{y_length}{Numeric: number of y categories (used for aspect ratio).}
+
+\item{pip_scale}{Numeric (0–1): controls pip diameter relative to the
+maximum available space. When \code{size} is constant (not mapped), all pips
+are drawn at \code{pip_scale} fraction of the die face. When \code{size} is mapped
+to a variable, pips scale between 0.25 (smallest value) and \code{pip_scale}
+(largest value) of the maximum pip diameter. Default is \code{0.75}. Set to
+\code{NULL} to disable auto-scaling and use the raw \code{size} aesthetic.}
 
 \item{na.rm}{Remove missing values if \code{TRUE}.}
 
@@ -68,4 +76,4 @@ df <- data.frame(
 ggplot(df, aes(x, y, dots = dots)) +
   geom_dice(ndots = 6, x_length = 3, y_length = 1)
 }
-\keyword{datasets}
+\keyword{internal}

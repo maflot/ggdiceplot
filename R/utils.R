@@ -1,5 +1,5 @@
 # Register global variables to avoid CMD check warnings
-utils::globalVariables(c("x", "y", "z", "x_pos", "y_pos", "x_offset", "y_offset"))
+utils::globalVariables(c("x", "y", "z", "x_pos", "y_pos", "x_offset", "y_offset", "id", "size"))
 
 #' Calculate Dice Dot Offsets
 #'

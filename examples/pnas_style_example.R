@@ -226,5 +226,112 @@ print(cell_summary)
 print("PNAS-style dice plots created successfully!")
 print("Generated files:")
 print("- pnas_style_example.png")
-print("- pnas_style_example.pdf") 
+print("- pnas_style_example.pdf")
 print("- pnas_inflammatory_subset.png")
+
+# ---------------------------------------------------------------------------
+# pip_scale demonstration: fill-only version (no size mapping)
+# ---------------------------------------------------------------------------
+# When size is not mapped to a variable, geom_dice auto-scales each pip to
+# fill pip_scale * (available space per pip) at render time.
+# Use pip_scale = NULL to revert to the fixed size = 3 mm legacy behaviour.
+
+# Aggregate to one row per gene/cell_type (collapse demographics)
+gene_data_agg <- gene_data %>%
+  group_by(gene, cell_type) %>%
+  summarise(
+    expression_level = mean(expression_level, na.rm = TRUE),
+    demographic      = first(demographic),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    gene      = factor(gene, levels = top_genes),
+    cell_type = factor(cell_type, levels = unname(cell_type_names))
+  )
+
+# -- Auto-scaled (default pip_scale = 0.75) -----------------------------------
+p_auto <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
+  geom_dice(
+    aes(dots = cell_type, fill = expression_level, width = 0.85, height = 0.85),
+    na.rm       = TRUE,
+    show.legend = TRUE,
+    ndots       = length(unique(gene_data_agg$cell_type)),
+    x_length    = length(top_genes),
+    y_length    = length(cell_types)
+    # pip_scale defaults to 0.75
+  ) +
+  scale_dots_discrete(guide = "none") +
+  scale_fill_gradient2(
+    low = "#2166AC", high = "#762A83", mid = "white",
+    na.value = "grey90", limit = c(lo, up), midpoint = mid,
+    name = "Expression\nLevel"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x   = element_text(angle = 45, hjust = 1, size = 9),
+    axis.text.y   = element_text(size = 10),
+    legend.text   = element_text(size = 9),
+    legend.title  = element_text(size = 10),
+    panel.grid    = element_blank()
+  ) +
+  labs(
+    x        = "Gene",
+    y        = "Cell Type",
+    title    = "pip_scale = 0.75  (auto-scaled, default)",
+    subtitle = "No size mapping — pip diameter adapts to figure size"
+  )
+
+# -- Fixed legacy size (pip_scale = NULL) -------------------------------------
+p_fixed <- p_auto +
+  geom_dice(
+    aes(dots = cell_type, fill = expression_level, width = 0.85, height = 0.85),
+    na.rm       = TRUE,
+    show.legend = FALSE,
+    ndots       = length(unique(gene_data_agg$cell_type)),
+    x_length    = length(top_genes),
+    y_length    = length(cell_types),
+    pip_scale    = NULL   # disables auto-scaling; falls back to size = 3 mm
+  ) +
+  labs(
+    title    = "pip_scale = NULL  (fixed size = 3 mm)",
+    subtitle = "Legacy behaviour — may leave excess whitespace at small figure sizes"
+  )
+
+# Actually rebuild separately so they render independently
+p_fixed <- ggplot(gene_data_agg, aes(x = gene, y = cell_type)) +
+  geom_dice(
+    aes(dots = cell_type, fill = expression_level, width = 0.85, height = 0.85),
+    na.rm       = TRUE,
+    show.legend = TRUE,
+    ndots       = length(unique(gene_data_agg$cell_type)),
+    x_length    = length(top_genes),
+    y_length    = length(cell_types),
+    pip_scale    = NULL
+  ) +
+  scale_dots_discrete(guide = "none") +
+  scale_fill_gradient2(
+    low = "#2166AC", high = "#762A83", mid = "white",
+    na.value = "grey90", limit = c(lo, up), midpoint = mid,
+    name = "Expression\nLevel"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x   = element_text(angle = 45, hjust = 1, size = 9),
+    axis.text.y   = element_text(size = 10),
+    legend.text   = element_text(size = 9),
+    legend.title  = element_text(size = 10),
+    panel.grid    = element_blank()
+  ) +
+  labs(
+    x        = "Gene",
+    y        = "Cell Type",
+    title    = "pip_scale = NULL  (fixed size = 3 mm)",
+    subtitle = "Legacy behaviour — may leave excess whitespace at small figure sizes"
+  )
+
+ggsave("pnas_pip_scale_auto.png",  p_auto,  width = 14, height = 5, dpi = 300)
+ggsave("pnas_pip_scale_fixed.png", p_fixed, width = 14, height = 5, dpi = 300)
+
+print("pip_scale comparison plots created:")
+print("- pnas_pip_scale_auto.png   (pip_scale = 0.75, auto-scaled)")
+print("- pnas_pip_scale_fixed.png  (pip_scale = NULL, fixed size = 3 mm)")

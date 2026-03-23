@@ -1,0 +1,15 @@
+^\.pixi
+^pixi\.toml$
+^pixi\.lock$
+^demo_output
+^legacy examples
+^test_simple_dice\.R$
+^test_fill_legend_fix\.R$
+^Rplots\.pdf$
+^\.github
+^\.DS_Store$
+^\.claude
+^CLAUDE\.md$
+^examples
+^README\.html$
+^data-raw$
