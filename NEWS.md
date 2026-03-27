@@ -1,3 +1,17 @@
+# ggdiceplot 1.2.0
+
+## Bug fixes
+
+* **Fixed dice not rendering with ggplot2 >= 4.0** — The `drawDetails.DiceGrob`
+  S3 method was not registered in the package NAMESPACE, so grid never
+  dispatched to the custom drawing code. Neither tiles nor pips were drawn.
+  Fixed by adding `S3method(grid::drawDetails, DiceGrob)` to NAMESPACE via
+  `@exportS3Method`.
+
+* **Fixed invisible pips when `fill` is not mapped** — When the `fill`
+  aesthetic was not mapped (default `NA`), pip `colour` was also set to `NA`,
+  making pips invisible. Pips now default to black when `fill` is unmapped.
+
 # ggdiceplot 1.1.0
 
 ## New features

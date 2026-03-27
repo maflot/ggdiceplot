@@ -1,0 +1,15 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "DicePlot: a package for high-dimensional categorical data visualization",
+  author   = c(
+    person("Matthias", "Flotho"),
+    person("Philipp", "Flotho"),
+    person("Andreas", "Keller")
+  ),
+  journal  = "Bioinformatics",
+  year     = "2026",
+  volume   = "42",
+  number   = "2",
+  pages    = "btaf337",
+  publisher = "Oxford University Press"
+)
