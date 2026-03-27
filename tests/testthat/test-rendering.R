@@ -161,8 +161,7 @@ test_that("rendering all ndots values to a device does not error", {
     tf <- tempfile(fileext = ".png")
     on.exit(unlink(tf), add = TRUE)
     expect_no_error(
-      ggplot2::ggsave(tf, plot = p, width = 3, height = 3, dpi = 72),
-      info = paste0("Rendering ndots = ", n, " failed")
+      ggplot2::ggsave(tf, plot = p, width = 3, height = 3, dpi = 72)
     )
   }
 })

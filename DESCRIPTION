@@ -29,8 +29,8 @@ Imports:
     scales,
     tibble
 LazyData: true
-Depends:
-    R (>= 4.1.0)
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Depends:
+    R (>= 4.1.0)

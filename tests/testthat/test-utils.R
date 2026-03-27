@@ -4,14 +4,10 @@
 test_that("make_offsets() returns a data frame with correct structure for all n", {
   for (n in 1:6) {
     offsets <- make_offsets(n)
-    expect_s3_class(offsets, "data.frame",
-                    label = paste("make_offsets(", n, ") class"))
-    expect_equal(nrow(offsets), n,
-                 label = paste("make_offsets(", n, ") nrow"))
-    expect_named(offsets, c("key", "x", "y"),
-                 label = paste("make_offsets(", n, ") column names"))
-    expect_equal(offsets$key, seq_len(n),
-                 label = paste("make_offsets(", n, ") key values"))
+    expect_s3_class(offsets, "data.frame")
+    expect_equal(nrow(offsets), n)
+    expect_named(offsets, c("key", "x", "y"))
+    expect_equal(offsets$key, seq_len(n))
   }
 })
 
