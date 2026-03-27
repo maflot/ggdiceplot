@@ -112,7 +112,9 @@ GeomDice <- ggplot2::ggproto("GeomDice", ggplot2::Geom,
                                point_df$stroke <- attr_lookup$stroke[match_idx]
                                point_df$alpha <- attr_lookup$alpha[match_idx]
                                point_df$fill <- attr_lookup$fill[match_idx]
-                               point_df$colour <- attr_lookup$fill[match_idx]
+                               pip_colours <- attr_lookup$fill[match_idx]
+                               pip_colours[is.na(pip_colours)] <- "black"
+                               point_df$colour <- pip_colours
                                point_df$group <- attr_lookup$group[match_idx]
                                point_df$PANEL <- 1
 
@@ -218,7 +220,7 @@ dice_grob <- function(point_df, tile_df, panel_params, coord,
 }
 
 #' @importFrom grid drawDetails
-#' @method drawDetails DiceGrob
+#' @exportS3Method grid::drawDetails DiceGrob
 drawDetails.DiceGrob <- function(x, recording) {
   point_df <- x$point_df
 
