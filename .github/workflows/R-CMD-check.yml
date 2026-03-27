@@ -24,8 +24,8 @@ jobs:
           - {os: ubuntu-latest,  r: 'oldrel-1', ggplot2: 'CRAN'}
           # ggplot2 development version (catches breaking changes early)
           - {os: ubuntu-latest,  r: 'release',  ggplot2: 'devel'}
-          # Minimum supported ggplot2 version declared in DESCRIPTION
-          - {os: ubuntu-latest,  r: 'release',  ggplot2: '3.4.0'}
+          # Minimum supported ggplot2 version (matches legendry requirement)
+          - {os: ubuntu-latest,  r: 'oldrel-1', ggplot2: '3.5.2'}
           # Windows and macOS smoke tests
           - {os: windows-latest, r: 'release',  ggplot2: 'CRAN'}
           - {os: macos-latest,   r: 'release',  ggplot2: 'CRAN'}
@@ -58,9 +58,9 @@ jobs:
         run: pak::pak("tidyverse/ggplot2")
 
       - name: Install ggplot2 minimum supported version
-        if: matrix.config.ggplot2 == '3.4.0'
+        if: matrix.config.ggplot2 == '3.5.2'
         shell: Rscript {0}
-        run: pak::pak("ggplot2@3.4.0")
+        run: pak::pak("ggplot2@3.5.2")
 
       - uses: r-lib/actions/check-r-package@v2
         with:
