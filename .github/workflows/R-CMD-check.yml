@@ -1,0 +1,68 @@
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: R-CMD-check
+
+permissions: read-all
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (R ${{ matrix.config.r }}, ggplot2 ${{ matrix.config.ggplot2 }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # Primary: R release against current CRAN ggplot2
+          - {os: ubuntu-latest,  r: 'release',  ggplot2: 'CRAN'}
+          # R oldrel to catch regressions on the previous R release
+          - {os: ubuntu-latest,  r: 'oldrel-1', ggplot2: 'CRAN'}
+          # ggplot2 development version (catches breaking changes early)
+          - {os: ubuntu-latest,  r: 'release',  ggplot2: 'devel'}
+          # Minimum supported ggplot2 version (matches legendry requirement)
+          - {os: ubuntu-latest,  r: 'oldrel-1', ggplot2: '3.5.2'}
+          # Windows and macOS smoke tests
+          - {os: windows-latest, r: 'release',  ggplot2: 'CRAN'}
+          - {os: macos-latest,   r: 'release',  ggplot2: 'CRAN'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      # Override ggplot2 after the standard dependency install when a
+      # non-CRAN version is requested.
+      - name: Install ggplot2 devel (from GitHub)
+        if: matrix.config.ggplot2 == 'devel'
+        shell: Rscript {0}
+        run: pak::pak("tidyverse/ggplot2")
+
+      - name: Install ggplot2 minimum supported version
+        if: matrix.config.ggplot2 == '3.5.2'
+        shell: Rscript {0}
+        run: pak::pak("ggplot2@3.5.2")
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
