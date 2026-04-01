@@ -1,8 +1,7 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/ggdiceplot)](https://CRAN.R-project.org/package=ggdiceplot)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ggdiceplot)](https://CRAN.R-project.org/package=ggdiceplot)
 
-
-# ggdiceplot
+# ggdiceplot <img src="man/figures/logo.png" align="right" height="139" />
 
 > [!Note]
 > This repository is in active development
